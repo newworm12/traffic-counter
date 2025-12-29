@@ -7,6 +7,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Traffic Counter</title>
 <style>
+  
 :root{
   --bg: #1c1c1c;
   --text: #ffffff;
@@ -22,6 +23,23 @@
  --card: #ffffff; /* kotak jadi putih */ 
  --card-contrast: #111111; /* teks di atas kotak jadi gelap */ 
 }
+.app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* bagian atas tidak scroll */
+.top-panel {
+  flex-shrink: 0;
+}
+
+/* hanya icon yang scroll */
+.grid-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
 
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -34,12 +52,7 @@ body{
   -moz-osx-font-smoothing:grayscale;
 }
 /* ===== PREVENT REFRESH / SCROLL (WAJIB) ===== */
-html, body {
-  height: 100%;
-  overflow: hidden;
-  overscroll-behavior: none;
-  touch-action: manipulation;
-}
+
 
 /* Header */
 header{
@@ -228,7 +241,7 @@ header #timer{font-weight:600;color:var(--muted);margin-top:6px;display:block}
   color:var(--accent-contrast);
 }
 /* ===== MOBILE LOCK SCROLL ===== */
-html, body {
+/*html, body {
   height: 100%;
   overflow: hidden;
   touch-action: manipulation;
@@ -288,76 +301,97 @@ body {
   <span id="timer">00:00:00</span>
 </header>
 
-<div class="controls">
-    
-    <div class="lane-select">
-  <label>
-    <input type="radio" name="lane" value="Kiri" checked>
-    Lajur Kiri
-  </label>
-  <label>
-    <input type="radio" name="lane" value="Kanan">
-    Lajur Kanan
-  </label>
-</div>
+<div class="app">
 
-  <input id="surveyor" type="text" placeholder="Nama surveyor" />
+  <!-- BAGIAN ATAS (TETAP / TIDAK SCROLL) -->
+  <div class="top-panel">
 
-  <button id="btnStart" onclick="start()">▶ Start</button>
-  <button onclick="pause()">⏸ Pause</button>
-  <button onclick="stop()">⏹ Stop</button>
+    <header>
+      <strong>Traffic Counter</strong>
+      <span id="timer">00:00:00</span>
+    </header>
 
-  <div class="custom-select" id="directionSelect">
-    <div class="selected" onclick="toggleDropdown()">Arah A</div>
-    <div class="options">
-      <div onclick="setDirection('A','Arah A')">Arah A</div>
-      <div onclick="setDirection('B','Arah B')">Arah B</div>
-      <div onclick="setDirection('AB','Arah A + B')">Arah A + B</div>
+    <div class="controls">
+        
+      <div class="lane-select">
+        <label>
+          <input type="radio" name="lane" value="Kiri" checked>
+          Lajur Kiri
+        </label>
+        <label>
+          <input type="radio" name="lane" value="Kanan">
+          Lajur Kanan
+        </label>
+      </div>
+
+      <input id="surveyor" type="text" placeholder="Nama surveyor" />
+
+      <button id="btnStart" onclick="start()">▶ Start</button>
+      <button onclick="pause()">⏸ Pause</button>
+      <button onclick="stop()">⏹ Stop</button>
+
+      <div class="custom-select" id="directionSelect">
+        <div class="selected" onclick="toggleDropdown()">Arah A</div>
+        <div class="options">
+          <div onclick="setDirection('A','Arah A')">Arah A</div>
+          <div onclick="setDirection('B','Arah B')">Arah B</div>
+          <div onclick="setDirection('AB','Arah A + B')">Arah A + B</div>
+        </div>
+      </div>
+
+      <button id="btnExport" class="export-red" onclick="exportCSV()" disabled>
+        ⬇ Export
+      </button>
+      <button onclick="resetAll()">🔄 Reset</button>
+
     </div>
   </div>
 
-  <button id="btnExport" class="export-red" onclick="exportCSV()" disabled>⬇ Export</button>
-  <button onclick="resetAll()">🔄 Reset</button>
+  <!-- BAGIAN BAWAH (BISA SCROLL) -->
+  <div class="grid-wrapper">
+    <div class="grid" id="grid">
+
+      <button class="btn colored disabled" onclick="count('Car')">
+        <div class="circle car"><span class="emoji">🚗</span></div>
+        <div class="count" id="Car">0</div>
+        <div class="label">Car</div>
+      </button>
+
+      <button class="btn colored disabled" onclick="count('Bus')">
+        <div class="circle bus"><span class="emoji">🚌</span></div>
+        <div class="count" id="Bus">0</div>
+        <div class="label">Bus</div>
+      </button>
+
+      <button class="btn colored disabled" onclick="count('Motor')">
+        <div class="circle bike"><span class="emoji">🏍️</span></div>
+        <div class="count" id="Motor">0</div>
+        <div class="label">Motor</div>
+      </button>
+
+      <button class="btn colored disabled" onclick="count('Van')">
+        <div class="circle van"><span class="emoji">🚐</span></div>
+        <div class="count" id="Van">0</div>
+        <div class="label">Van</div>
+      </button>
+
+      <button class="btn colored disabled" onclick="count('Medium')">
+        <div class="circle truck1"><span class="emoji">🚚</span></div>
+        <div class="count" id="Medium">0</div>
+        <div class="label">Medium</div>
+      </button>
+
+      <button class="btn colored disabled" onclick="count('Heavy')">
+        <div class="circle truck2"><span class="emoji">🚛</span></div>
+        <div class="count" id="Heavy">0</div>
+        <div class="label">Heavy</div>
+      </button>
+
+    </div>
+  </div>
+
 </div>
 
-
-<div class="grid" id="grid">
-  <button class="btn colored disabled" onclick="count('Car')">
-    <div class="circle car" aria-hidden="true"><span class="emoji">🚗</span></div>
-    <div class="count" id="Car">0</div>
-    <div class="label">Car</div>
-  </button>
-
-  <button class="btn colored disabled" onclick="count('Bus')">
-    <div class="circle bus" aria-hidden="true"><span class="emoji">🚌</span></div>
-    <div class="count" id="Bus">0</div>
-    <div class="label">Bus</div>
-  </button>
-
-  <button class="btn colored disabled" onclick="count('Motor')">
-    <div class="circle bike" aria-hidden="true"><span class="emoji">🏍️</span></div>
-    <div class="count" id="Motor">0</div>
-    <div class="label">Motor</div>
-  </button>
-
-  <button class="btn colored disabled" onclick="count('Van')">
-    <div class="circle van" aria-hidden="true"><span class="emoji">🚐</span></div>
-    <div class="count" id="Van">0</div>
-    <div class="label">Van</div>
-  </button>
-
-  <button class="btn colored disabled" onclick="count('Medium')">
-    <div class="circle truck1" aria-hidden="true"><span class="emoji">🚚</span></div>
-    <div class="count" id="Medium">0</div>
-    <div class="label">Medium</div>
-  </button>
-
-  <button class="btn colored disabled" onclick="count('Heavy')">
-    <div class="circle truck2" aria-hidden="true"><span class="emoji">🚛</span></div>
-    <div class="count" id="Heavy">0</div>
-    <div class="label">Heavy</div>
-  </button>
-</div>
 
 <script>
 /* JavaScript tetap sama seperti sebelumnya */
@@ -740,6 +774,7 @@ function confirmReset(ok){
 
 </body>
 </html>
+
 
 
 
