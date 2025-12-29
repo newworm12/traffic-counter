@@ -303,6 +303,7 @@ header #timer{font-weight:600;color:var(--muted);margin-top:6px;display:block}
 /* JavaScript tetap sama seperti sebelumnya */
 const INTERVAL_MINUTE = 15;
 const INTERVAL_SEC = INTERVAL_MINUTE * 60;
+const API_URL = "https://script.google.com/macros/s/AKfycbz-SjWr2aoNCDOyvvZLCJW5vBI58AKjyXzHBa-qpj3mLH4nzWV-zHDZdwW1Ryp_nDY/exec";
 
 let counters = {Car:0,Bus:0,Motor:0,Van:0,Medium:0,Heavy:0};
 let logs = [];
@@ -451,18 +452,36 @@ updateExportButton();
 
 /* ================= COUNT ================= */
 function count(type){
-    if(!startTime || paused) return;
+  if(!startTime || paused) return;
 
-    counters[type]++;
-    document.getElementById(type).innerText = counters[type];
-    logs.push({
-  time: formatDateTimeForLog(new Date()),
-  lane: selectedLane,
-  vehicle: type,
-  name: surveyorName
- });
- updateExportButton()
+  counters[type]++;
+  document.getElementById(type).innerText = counters[type];
+
+  const payload = {
+    timestamp: new Date().toISOString(),
+    lane: selectedLane,
+    vehicle: type,
+    surveyor: surveyorName
+  };
+
+  fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify(payload),
+    headers: {
+      "Content-Type": "application/json"
+    }
+  })
+  .then(res => res.json())
+  .then(data => {
+    if(data.status !== "success"){
+      console.error("Gagal kirim data:", data);
+    }
+  })
+  .catch(err => {
+    console.error("Error koneksi:", err);
+  });
 }
+
 
 
 
@@ -573,3 +592,4 @@ document.addEventListener("click", e=>{
 
 </body>
 </html>
+
