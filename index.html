@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Traffic Counter</title>
+<style>
+:root{
+  --bg: #1c1c1c;
+  --text: #ffffff;
+  --accent: #601ad1;
+  --accent-2: #601ad1;;
+  --muted: #bdbdbd;
+  --card: #ec5e27; /* warna kotak kecil */
+  --shadow: 0 6px 18px rgba(0,0,0,0.6);
+  --radius: 14px;
+  --gap: 16px;
+  --control-height: 48px;
+  --accent-contrast: #ffffff;
+ --card: #ffffff; /* kotak jadi putih */ 
+ --card-contrast: #111111; /* teks di atas kotak jadi gelap */ 
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial;
+  background:var(--bg);
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* Header */
+header{
+  background:linear-gradient(180deg, rgba(125,57,235,0.06), rgba(198,255,51,0.02));
+  padding:18px 16px;
+  text-align:center;
+  box-shadow:var(--shadow);
+}
+header strong{display:block;font-size:18px}
+header #timer{font-weight:600;color:var(--muted);margin-top:6px;display:block}
+
+/* Controls */
+.controls{
+  display:flex;
+  gap:8px;
+  padding:14px;
+  align-items:center;
+  flex-wrap:wrap;
+  max-width:1100px;
+  margin:12px auto;
+}
+.controls input, .controls select, .controls button{
+  height:var(--control-height);
+  padding:0 14px;
+  font-size:15px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,0.06);
+  background:var(--card); /* menggunakan warna kotak kecil baru */
+  color:var(--text);
+  box-shadow:var(--shadow);
+}
+.controls input,
+.controls select,
+.controls button{
+  height:var(--control-height);
+  padding:0 14px;
+  font-size:15px;
+  border-radius:10px;
+  border:none;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  color:var(--accent-contrast);
+  box-shadow:0 8px 24px rgba(125,57,235,0.25);
+}
+.controls input::placeholder{
+  color:rgba(255,255,255,0.75);
+}
+
+.controls button.export-red{ background:var(--card); color:var(--text); border:1px solid rgba(255,255,255,0.06) }
+.controls button.export-blue{ background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:var(--accent-contrast); border:none }
+.controls button#btnStart.active{ background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:var(--accent-contrast); border:none; box-shadow:0 8px 24px rgba(125,57,235,0.18) }
+
+/* Grid */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:var(--gap);
+  padding:16px;
+  max-width:1100px;
+  margin:0 auto 48px;
+}
+
+/* Button cards */
+.btn{
+  background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border:1px solid rgba(255,255,255,0.03);
+  border-radius:16px;
+  padding:18px 12px;
+  box-shadow:var(--shadow);
+  text-align:center;
+  cursor:pointer;
+  transition:transform .12s ease, box-shadow .12s ease;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+  min-height:150px;
+}
+.btn:active{ transform:translateY(2px) scale(.995) }
+.btn:hover{ transform:translateY(-4px) }
+.btn.disabled{ opacity:0.45; pointer-events:none; transform:none; box-shadow:none }
+
+/* Minimal addition: kelas .colored untuk membuat kotak kontras (#ec5e27) */
+.btn.colored {
+  background: var(--card);
+  color: var(--card-contrast);
+  border: 1px solid rgba(0,0,0,0.12);
+  box-shadow: 0 10px 30px rgba(236,94,39,0.12);
+}
+.btn.colored .label,
+.btn.colored .count {
+  color: var(--card-contrast);
+}
+
+/* Circle icons (emoji) */
+.circle{
+  width:22vw;
+  height:22vw;
+  max-width:110px;
+  max-height:110px;
+  margin:auto;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:44px; /* emoji size */
+  color:var(--text);
+  box-shadow:0 6px 18px rgba(0,0,0,0.6);
+  background:linear-gradient(135deg,#2a2a2a,#1f1f1f);
+  overflow:hidden;
+}
+
+/* vehicle color accents */
+.circle.car{ background: linear-gradient(135deg,#7D39EB,#5A2BD6) }
+.circle.bus{ background: linear-gradient(135deg,#C6FF33,#AEEA00); color:#111 }
+.circle.bike{ background: linear-gradient(135deg,#7D39EB,#26a69a) }
+.circle.van{ background: linear-gradient(135deg,#ef5350,#e53935) }
+.circle.truck1{ background: linear-gradient(135deg,#e57373,#ef5350) }
+.circle.truck2{ background: linear-gradient(135deg,#b71c1c,#c62828) }
+
+/* ensure emoji centered and not selectable */
+.circle .emoji { user-select:none; line-height:1; }
+
+/* counts and labels */
+.count{ font-size:20px; font-weight:700; color:var(--text) }
+.label{ font-size:13px; color:var(--muted) }
+
+/* Responsive */
+@media (max-width:900px){
+  .grid{ grid-template-columns:repeat(2,1fr) }
+}
+@media (max-width:520px){
+  .grid{ grid-template-columns:1fr }
+  .controls{ padding:10px }
+  .controls input{ min-width:120px }
+}
+/* ===== CUSTOM DROPDOWN THEME ===== */
+.custom-select{
+  position:relative;
+  min-width:160px;
+  user-select:none;
+}
+
+.custom-select .selected{
+  height:var(--control-height);
+  padding:0 14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-radius:10px;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  color:var(--accent-contrast);
+  cursor:pointer;
+  box-shadow:0 8px 24px rgba(125,57,235,0.25);
+}
+
+.custom-select .selected::after{
+  content:"▼";
+  font-size:12px;
+}
+
+.custom-select .options{
+  position:absolute;
+  top:110%;
+  left:0;
+  right:0;
+  background:#1f1f1f;
+  border-radius:10px;
+  overflow:hidden;
+  box-shadow:var(--shadow);
+  display:none;
+  z-index:999;
+}
+
+.custom-select.open .options{
+  display:block;
+}
+
+.custom-select .options div{
+  padding:12px 14px;
+  cursor:pointer;
+  color:#ffffff;
+}
+
+.custom-select .options div:hover{
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  color:var(--accent-contrast);
+}
+
+</style>
+</head>
+<body>
+
+<header>
+  <strong>Traffic Counter</strong>
+  <span id="timer">00:00:00</span>
+</header>
+
+<div class="controls">
+    
+    <div class="lane-select">
+  <label>
+    <input type="radio" name="lane" value="Kiri" checked>
+    Lajur Kiri
+  </label>
+  <label>
+    <input type="radio" name="lane" value="Kanan">
+    Lajur Kanan
+  </label>
+</div>
+
+  <input id="surveyor" type="text" placeholder="Nama surveyor" />
+
+  <button id="btnStart" onclick="start()">▶ Start</button>
+  <button onclick="pause()">⏸ Pause</button>
+  <button onclick="stop()">⏹ Stop</button>
+
+  <div class="custom-select" id="directionSelect">
+    <div class="selected" onclick="toggleDropdown()">Arah A</div>
+    <div class="options">
+      <div onclick="setDirection('A','Arah A')">Arah A</div>
+      <div onclick="setDirection('B','Arah B')">Arah B</div>
+      <div onclick="setDirection('AB','Arah A + B')">Arah A + B</div>
+    </div>
+  </div>
+
+  <button id="btnExport" class="export-red" onclick="exportCSV()" disabled>⬇ Export</button>
+  <button onclick="resetAll()">🔄 Reset</button>
+</div>
+
+
+<div class="grid" id="grid">
+  <button class="btn colored disabled" onclick="count('Car')">
+    <div class="circle car" aria-hidden="true"><span class="emoji">🚗</span></div>
+    <div class="count" id="Car">0</div>
+    <div class="label">Car</div>
+  </button>
+
+  <button class="btn colored disabled" onclick="count('Bus')">
+    <div class="circle bus" aria-hidden="true"><span class="emoji">🚌</span></div>
+    <div class="count" id="Bus">0</div>
+    <div class="label">Bus</div>
+  </button>
+
+  <button class="btn colored disabled" onclick="count('Motor')">
+    <div class="circle bike" aria-hidden="true"><span class="emoji">🏍️</span></div>
+    <div class="count" id="Motor">0</div>
+    <div class="label">Motor</div>
+  </button>
+
+  <button class="btn colored disabled" onclick="count('Van')">
+    <div class="circle van" aria-hidden="true"><span class="emoji">🚐</span></div>
+    <div class="count" id="Van">0</div>
+    <div class="label">Van</div>
+  </button>
+
+  <button class="btn colored disabled" onclick="count('Medium')">
+    <div class="circle truck1" aria-hidden="true"><span class="emoji">🚚</span></div>
+    <div class="count" id="Medium">0</div>
+    <div class="label">Medium</div>
+  </button>
+
+  <button class="btn colored disabled" onclick="count('Heavy')">
+    <div class="circle truck2" aria-hidden="true"><span class="emoji">🚛</span></div>
+    <div class="count" id="Heavy">0</div>
+    <div class="label">Heavy</div>
+  </button>
+</div>
+
+<script>
+/* JavaScript tetap sama seperti sebelumnya */
+const INTERVAL_MINUTE = 15;
+const INTERVAL_SEC = INTERVAL_MINUTE * 60;
+
+let counters = {Car:0,Bus:0,Motor:0,Van:0,Medium:0,Heavy:0};
+let logs = [];
+let startTime = null;
+let timerInt = null;
+let lastInterval = 0;
+let intervalCount = 1;
+let surveyDateTime = "";
+let surveyorName = "";
+let selectedDirection = "A";
+let paused = false;
+let pausedAt = 0;
+let selectedLane = "Kiri";
+
+function updateLane(){
+  const checked = document.querySelector('input[name="lane"]:checked');
+  selectedLane = checked ? checked.value : "Kiri";
+}
+document.querySelectorAll('input[name="lane"]').forEach(r=>{
+  r.addEventListener("change", updateLane);
+});
+
+
+
+function toggleDropdown(){
+  document.getElementById("directionSelect").classList.toggle("open");
+}
+
+function setDirection(value,label){
+  selectedDirection = value;
+  document.querySelector("#directionSelect .selected").innerText = label;
+  document.getElementById("directionSelect").classList.remove("open");
+}
+
+function formatDateTimeForLog(d){
+    const dd = String(d.getDate()).padStart(2,'0');
+    const mm = String(d.getMonth()+1).padStart(2,'0');
+    const yyyy = d.getFullYear();
+    const hh = String(d.getHours()).padStart(2,'0');
+    const min = String(d.getMinutes()).padStart(2,'0');
+    const ss = String(d.getSeconds()).padStart(2,'0');
+    return `${dd}/${mm}/${yyyy} ${hh}:${min}:${ss}`;
+}
+function pause(){
+    if(!startTime || paused) return;
+
+    paused = true;
+    pausedAt = Date.now();
+
+    clearInterval(timerInt);
+    timerInt = null;
+
+    toggleButtons(false); // LOCK SCREEN
+    
+    document.querySelectorAll('input[name="lane"]').forEach(r=>{
+  r.disabled = false;
+ });
+}
+
+
+
+function start(){
+    const inputName = document.getElementById("surveyor").value.trim();
+    if(!inputName){
+        alert("Nama surveyor wajib diisi sebelum memulai.");
+        document.getElementById("surveyor").focus();
+        return;
+    }
+
+    surveyorName = inputName;
+
+    // KUNCI LAJUR SAAT START
+    document.querySelectorAll('input[name="lane"]').forEach(r=>{
+        r.disabled = true;
+    });
+
+    // LANJUT DARI PAUSE
+    if(startTime && paused){
+        startTime += (Date.now() - pausedAt);
+        paused = false;
+        toggleButtons(true);
+        timerInt = setInterval(updateTimer, 1000);
+        return;
+    }
+
+    // START BARU
+    if(startTime) return;
+
+    startTime = Date.now();
+    timerInt = setInterval(updateTimer, 1000);
+    document.getElementById("btnStart").classList.add("active");
+    toggleButtons(true);
+}
+
+
+
+    
+
+
+
+function stop(){
+    clearInterval(timerInt);
+    timerInt = null;
+    startTime = null;
+    document.getElementById("btnStart").classList.remove("active");
+    toggleButtons(false);
+    document.querySelectorAll('input[name="lane"]').forEach(r=>{
+  r.disabled = false;
+});
+}
+
+
+function toggleButtons(enable){
+    document.querySelectorAll(".btn").forEach(b=>{
+        b.classList.toggle("disabled", !enable);
+    });
+}
+
+/* DAN INI DI BAWAHNYA */
+document.addEventListener("click", e=>{
+    const sel = document.getElementById("directionSelect");
+    if(!sel.contains(e.target)){
+        sel.classList.remove("open");
+    }
+});
+
+/* ================= TIMER ================= */
+function updateTimer(){
+    if(!startTime) return;
+    let t = Math.floor((Date.now() - startTime) / 1000);
+    let h = String(Math.floor(t / 3600)).padStart(2,'0');
+    let m = String(Math.floor((t % 3600) / 60)).padStart(2,'0');
+    let s = String(t % 60).padStart(2,'0');
+    document.getElementById("timer").innerText = `${h}:${m}:${s}`;
+    if(t >= INTERVAL_SEC){
+    document.getElementById("btnExport").disabled = false;
+    document.getElementById("btnExport").classList.remove("export-red");
+    document.getElementById("btnExport").classList.add("export-blue");
+} else {
+    document.getElementById("btnExport").disabled = true;
+    document.getElementById("btnExport").classList.remove("export-blue");
+    document.getElementById("btnExport").classList.add("export-red");
+}
+updateExportButton();
+}
+
+/* ================= COUNT ================= */
+function count(type){
+    if(!startTime || paused) return;
+
+    counters[type]++;
+    document.getElementById(type).innerText = counters[type];
+    logs.push({
+  time: formatDateTimeForLog(new Date()),
+  lane: selectedLane,
+  vehicle: type,
+  name: surveyorName
+ });
+ updateExportButton()
+}
+
+
+
+
+
+function sanitizeFilename(name){
+    if(!name) return "";
+    return String(name).trim().replace(/[\/\\]/g, '-').replace(/[<>:"|?*\x00-\x1F]/g, '').replace(/\s+/g, '_');
+}
+function pad(n){ return String(n).padStart(2,'0'); }
+function formatDateForFilename(d){
+    const dd = pad(d.getDate());
+    const mm = pad(d.getMonth()+1);
+    const yy = String(d.getFullYear()).slice(-2);
+    return `${dd}-${mm}-${yy}`;
+}
+/* ================= EXPORT ================= */
+function exportCSV(){
+
+    // ===== PENGAMAN 15 MENIT =====
+    if(!startTime) return;
+
+    const elapsed = (Date.now() - startTime) / 1000;
+    if(elapsed < INTERVAL_SEC){
+        alert("Export hanya bisa dilakukan setelah 15 menit.");
+        return;
+    }
+    // ============================
+
+    const nameNow = document.getElementById("surveyor").value.trim();
+    const displayName = nameNow || surveyorName || "";
+
+    // ===== HEADER CSV =====
+    let csv = `Nama Surveyor: ${displayName}\n`;
+    csv += `Tanggal: ${formatDateTimeForLog(new Date())}\n\n`;
+    csv += `Waktu,Lajur,Kendaraan,Nama Surveyor\n`;
+
+    // ===== ISI DATA RAW =====
+    logs.forEach(l=>{
+        const safeName = l.name
+            ? `"${String(l.name).replace(/"/g,'""')}"`
+            : "";
+        csv += `${l.time},${l.lane},${l.vehicle},${safeName}\n`;
+    });
+
+    // ===== DOWNLOAD =====
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+
+    const now = new Date();
+    const datePart = formatDateForFilename(now);
+    const safeFileName = sanitizeFilename(displayName);
+    a.download = safeFileName
+        ? `${safeFileName}_traffic_${datePart}.csv`
+        : `traffic_${datePart}.csv`;
+
+    a.click();
+
+    // ===== RESET UNTUK INTERVAL BERIKUTNYA =====
+    startTime = Date.now();
+    resetCounters();
+}
+
+
+function updateExportButton(){
+    const btn = document.getElementById("btnExport");
+    if(logs.length > 0){
+        btn.disabled = false;
+        btn.classList.remove("export-red");
+        btn.classList.add("export-blue");
+    } else {
+        btn.disabled = true;
+        btn.classList.remove("export-blue");
+        btn.classList.add("export-red");
+    }
+}
+
+function resetCounters(){
+    for(let k in counters){
+        counters[k]=0;
+        document.getElementById(k).innerText=0;
+    }
+    logs=[];
+    
+}
+
+function resetAll(){
+  if(!confirm("Reset semua data?")) return;
+  stop();
+  logs=[];
+  for(let k in counters){
+    counters[k]=0;
+    document.getElementById(k).innerText=0;
+  }
+  document.getElementById("timer").innerText="00:00:00";
+  document.getElementById("btnExport").disabled=true;
+}
+document.addEventListener("click", e=>{
+  const sel = document.getElementById("directionSelect");
+  if(!sel.contains(e.target)){
+    sel.classList.remove("open");
+  }
+  
+});
+
+</script>
+
+</body>
+</html>
