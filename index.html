@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+<meta name="screen-orientation" content="portrait">
+<meta name="orientation" content="portrait">
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Traffic Counter</title>
@@ -218,6 +220,57 @@ header #timer{font-weight:600;color:var(--muted);margin-top:6px;display:block}
   background:linear-gradient(135deg,var(--accent),var(--accent-2));
   color:var(--accent-contrast);
 }
+/* ===== MOBILE LOCK SCROLL ===== */
+html, body {
+  height: 100%;
+  overflow: hidden;
+  touch-action: manipulation;
+}
+
+body {
+  overscroll-behavior: none;
+}
+/* ===== MOBILE UI OPTIMIZATION ===== */
+@media (max-width: 600px) {
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 12px;
+  }
+
+  .btn {
+    min-height: 220px;
+    padding: 24px 12px;
+    border-radius: 20px;
+  }
+
+  .circle {
+    width: 140px;
+    height: 140px;
+    font-size: 64px;
+  }
+
+  .count {
+    font-size: 28px;
+    margin-top: 8px;
+  }
+
+  .label {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  /* tombol kontrol */
+  .controls button,
+  .controls input,
+  .custom-select .selected {
+    height: 56px;
+    font-size: 16px;
+    border-radius: 14px;
+  }
+
+}
 
 </style>
 </head>
@@ -317,6 +370,16 @@ let selectedDirection = "A";
 let paused = false;
 let pausedAt = 0;
 let selectedLane = "Kiri";
+let surveyRunning = false;
+
+
+
+window.addEventListener("beforeunload", function (e) {
+  if (surveyRunning) {
+    e.preventDefault();
+    e.returnValue = "Survey sedang berjalan. Yakin ingin keluar?";
+  }
+});
 
 function updateLane(){
   const checked = document.querySelector('input[name="lane"]:checked');
@@ -381,23 +444,21 @@ function start(){
     });
 
     // LANJUT DARI PAUSE
-    if(startTime && paused){
-        startTime += (Date.now() - pausedAt);
-        paused = false;
-        toggleButtons(true);
-        timerInt = setInterval(updateTimer, 1000);
-        return;
-    }
+   if(startTime && paused){
+    startTime += (Date.now() - pausedAt);
+    paused = false;
+    surveyRunning = true;
+    toggleButtons(true);
+    timerInt = setInterval(updateTimer, 1000);
+    return;
+}
 
     // START BARU
     if(startTime) return;
 
     startTime = Date.now();
     timerInt = setInterval(updateTimer, 1000);
-    document.getElementById("btnStart").classList.add("active");
-    toggleButtons(true);
-}
-
+} // ← INI YANG KURANG
 
 
     
@@ -408,11 +469,14 @@ function stop(){
     clearInterval(timerInt);
     timerInt = null;
     startTime = null;
+    surveyRunning = false;
     document.getElementById("btnStart").classList.remove("active");
     toggleButtons(false);
     document.querySelectorAll('input[name="lane"]').forEach(r=>{
   r.disabled = false;
 });
+  surveyRunning = false;
+
 }
 
 
@@ -579,19 +643,23 @@ function resetAll(){
   }
   document.getElementById("timer").innerText="00:00:00";
   document.getElementById("btnExport").disabled=true;
+  surveyRunning = false;
+  
 }
 document.addEventListener("click", e=>{
   const sel = document.getElementById("directionSelect");
   if(!sel.contains(e.target)){
     sel.classList.remove("open");
   }
-  
+ 
+
 });
 
 </script>
 
 </body>
 </html>
+
 
 
 
