@@ -410,55 +410,55 @@ function formatDateTimeForLog(d){
     const ss = String(d.getSeconds()).padStart(2,'0');
     return `${dd}/${mm}/${yyyy} ${hh}:${min}:${ss}`;
 }
+  
 function pause(){
-    if(!startTime || paused) return;
+  if(!startTime || paused) return;
 
-    paused = true;
-    pausedAt = Date.now();
+  paused = true;
+  pausedAt = Date.now();
 
-    clearInterval(timerInt);
-    timerInt = null;
+  clearInterval(timerInt);
+  timerInt = null;
 
-    toggleButtons(false); // LOCK SCREEN
-    
-    document.querySelectorAll('input[name="lane"]').forEach(r=>{
-  r.disabled = false;
- });
+  toggleButtons(false); // hanya kunci tombol hitung
 }
+
 
 
 
 function start(){
-    const inputName = document.getElementById("surveyor").value.trim();
-    if(!inputName){
-        alert("Nama surveyor wajib diisi sebelum memulai.");
-        document.getElementById("surveyor").focus();
-        return;
-    }
+  const inputName = document.getElementById("surveyor").value.trim();
+  if(!inputName){
+    alert("Nama surveyor wajib diisi sebelum memulai.");
+    document.getElementById("surveyor").focus();
+    return;
+  }
 
-    surveyorName = inputName;
+  surveyorName = inputName;
+  surveyRunning = true;
 
-    // KUNCI LAJUR SAAT START
-    document.querySelectorAll('input[name="lane"]').forEach(r=>{
-        r.disabled = true;
-    });
+  // KUNCI INPUT SAAT START
+  document.querySelectorAll('input[name="lane"]').forEach(r=>{
+    r.disabled = true;
+  });
+  document.getElementById("surveyor").disabled = true;
 
-    // LANJUT DARI PAUSE
-   if(startTime && paused){
+  // LANJUT DARI PAUSE
+  if(startTime && paused){
     startTime += (Date.now() - pausedAt);
     paused = false;
-    surveyRunning = true;
     toggleButtons(true);
     timerInt = setInterval(updateTimer, 1000);
     return;
+  }
+
+  // START BARU
+  if(startTime) return;
+
+  startTime = Date.now();
+  toggleButtons(true);                 // ✅ INI YANG KURANG
+  timerInt = setInterval(updateTimer, 1000);
 }
-
-    // START BARU
-    if(startTime) return;
-
-    startTime = Date.now();
-    timerInt = setInterval(updateTimer, 1000);
-} // ← INI YANG KURANG
 
 
     
@@ -466,18 +466,22 @@ function start(){
 
 
 function stop(){
-    clearInterval(timerInt);
-    timerInt = null;
-    startTime = null;
-    surveyRunning = false;
-    document.getElementById("btnStart").classList.remove("active");
-    toggleButtons(false);
-    document.querySelectorAll('input[name="lane"]').forEach(r=>{
-  r.disabled = false;
-});
+  clearInterval(timerInt);
+  timerInt = null;
+  startTime = null;
+  paused = false;
   surveyRunning = false;
 
+  toggleButtons(false);
+
+  document.getElementById("surveyor").disabled = false;
+  document.querySelectorAll('input[name="lane"]').forEach(r=>{
+    r.disabled = false;
+  });
+
+  document.getElementById("btnStart").classList.remove("active");
 }
+
 
 
 function toggleButtons(enable){
@@ -659,6 +663,7 @@ document.addEventListener("click", e=>{
 
 </body>
 </html>
+
 
 
 
