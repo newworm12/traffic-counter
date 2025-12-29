@@ -457,34 +457,33 @@ function count(type){
   counters[type]++;
   document.getElementById(type).innerText = counters[type];
 
-  const payload = {
-    timestamp: new Date().toISOString(),
+  logs.push({
+    time: formatDateTimeForLog(new Date()),
     lane: selectedLane,
     vehicle: type,
-    surveyor: surveyorName
-  };
+    name: surveyorName
+  });
 
- fetch("https://script.google.com/macros/s/AKfycbz-SjWr2aoNCDOyvvZLCJW5vBI58AKjyXzHBa-qpj3mLH4nzWV-zHDZdwW1Ryp_nDY/exec", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    surveyor: surveyorName,
-    lane: selectedLane,
-    vehicle: type
+  fetch(API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      surveyor: surveyorName,
+      lane: selectedLane,
+      vehicle: type
+    })
   })
-});
-  .then(res => res.json())
-  .then(data => {
-    if(data.status !== "success"){
-      console.error("Gagal kirim data:", data);
-    }
+  .then(res => res.text())
+  .then(text => {
+    console.log("Apps Script:", text);
   })
   .catch(err => {
-    console.error("Error koneksi:", err);
+    console.error("Error kirim data:", err);
   });
 }
+
 
 
 
@@ -596,5 +595,6 @@ document.addEventListener("click", e=>{
 
 </body>
 </html>
+
 
 
