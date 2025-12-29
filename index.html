@@ -451,6 +451,19 @@ updateExportButton();
 }
 
 /* ================= COUNT ================= */
+function sendToSheet(vehicle){
+  const data = new URLSearchParams();
+  data.append("surveyor", surveyorName);
+  data.append("lane", selectedLane);
+  data.append("vehicle", vehicle);
+
+  fetch(API_URL, {
+    method: "POST",
+    mode: "no-cors",
+    body: data
+  });
+}
+  
 function count(type){
   if(!startTime || paused) return;
 
@@ -464,25 +477,9 @@ function count(type){
     name: surveyorName
   });
 
-  fetch(API_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      surveyor: surveyorName,
-      lane: selectedLane,
-      vehicle: type
-    })
-  })
-  .then(res => res.text())
-  .then(text => {
-    console.log("Apps Script:", text);
-  })
-  .catch(err => {
-    console.error("Error kirim data:", err);
-  });
+  sendToSheet(type);
 }
+
 
 
 
@@ -595,6 +592,7 @@ document.addEventListener("click", e=>{
 
 </body>
 </html>
+
 
 
 
