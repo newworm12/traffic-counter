@@ -639,7 +639,12 @@ function resetCounters(){
 }
 
 function resetAll(){
-  if(!confirm("Reset semua data?")) return;
+  if(!surveyRunning && !startTime) return;
+  document.getElementById("confirmReset").style.display = "flex";
+}
+function confirmReset(ok){
+  document.getElementById("confirmReset").style.display = "none";
+  if(!ok) return;
 
   stop();
   logs = [];
@@ -655,15 +660,38 @@ function resetAll(){
   surveyRunning = false;
 }
 
-
- 
-
-
-
 </script>
+
+  <!-- ===== MODAL KONFIRMASI RESET ===== -->
+
+<div id="confirmReset" style="
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.75);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+">
+  <div style="
+    background:#1f1f1f;
+    padding:24px;
+    border-radius:16px;
+    max-width:320px;
+    text-align:center;
+  ">
+    <h3 style="margin-top:0">Reset Survey?</h3>
+    <p>Data yang sedang berjalan akan hilang.</p>
+    <div style="display:flex; gap:12px; margin-top:20px;">
+      <button onclick="confirmReset(false)" style="flex:1">Batal</button>
+      <button onclick="confirmReset(true)" style="flex:1; background:#e53935; color:white">Reset</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
+
 
 
 
