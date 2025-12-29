@@ -374,12 +374,7 @@ let surveyRunning = false;
 
 
 
-window.addEventListener("beforeunload", function (e) {
-  if (surveyRunning) {
-    e.preventDefault();
-    e.returnValue = "Survey sedang berjalan. Yakin ingin keluar?";
-  }
-});
+
 
 function updateLane(){
   const checked = document.querySelector('input[name="lane"]:checked');
@@ -430,20 +425,16 @@ function start(){
   const inputName = document.getElementById("surveyor").value.trim();
   if(!inputName){
     alert("Nama surveyor wajib diisi sebelum memulai.");
-    document.getElementById("surveyor").focus();
     return;
   }
 
   surveyorName = inputName;
   surveyRunning = true;
 
-  // KUNCI INPUT SAAT START
   document.querySelectorAll('input[name="lane"]').forEach(r=>{
     r.disabled = true;
   });
-  document.getElementById("surveyor").disabled = true;
 
-  // LANJUT DARI PAUSE
   if(startTime && paused){
     startTime += (Date.now() - pausedAt);
     paused = false;
@@ -451,6 +442,14 @@ function start(){
     timerInt = setInterval(updateTimer, 1000);
     return;
   }
+
+  if(startTime) return;
+
+  startTime = Date.now();
+  timerInt = setInterval(updateTimer, 1000);
+  toggleButtons(true);
+}
+
 
   // START BARU
   if(startTime) return;
@@ -474,13 +473,11 @@ function stop(){
 
   toggleButtons(false);
 
-  document.getElementById("surveyor").disabled = false;
   document.querySelectorAll('input[name="lane"]').forEach(r=>{
     r.disabled = false;
   });
-
-  document.getElementById("btnStart").classList.remove("active");
 }
+
 
 
 
@@ -491,12 +488,7 @@ function toggleButtons(enable){
 }
 
 /* DAN INI DI BAWAHNYA */
-document.addEventListener("click", e=>{
-    const sel = document.getElementById("directionSelect");
-    if(!sel.contains(e.target)){
-        sel.classList.remove("open");
-    }
-});
+
 
 /* ================= TIMER ================= */
 function updateTimer(){
@@ -639,22 +631,22 @@ function resetCounters(){
 
 function resetAll(){
   if(!confirm("Reset semua data?")) return;
+
   stop();
-  logs=[];
+  logs = [];
+
   for(let k in counters){
-    counters[k]=0;
-    document.getElementById(k).innerText=0;
+    counters[k] = 0;
+    document.getElementById(k).innerText = 0;
   }
-  document.getElementById("timer").innerText="00:00:00";
-  document.getElementById("btnExport").disabled=true;
+
+  document.getElementById("timer").innerText = "00:00:00";
+  document.getElementById("btnExport").disabled = true;
+
   surveyRunning = false;
-  
 }
-document.addEventListener("click", e=>{
-  const sel = document.getElementById("directionSelect");
-  if(!sel.contains(e.target)){
-    sel.classList.remove("open");
-  }
+
+
  
 
 });
@@ -663,6 +655,7 @@ document.addEventListener("click", e=>{
 
 </body>
 </html>
+
 
 
 
