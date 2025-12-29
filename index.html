@@ -431,10 +431,12 @@ function start(){
   surveyorName = inputName;
   surveyRunning = true;
 
+  // kunci pilihan lajur
   document.querySelectorAll('input[name="lane"]').forEach(r=>{
     r.disabled = true;
   });
 
+  // lanjut dari pause
   if(startTime && paused){
     startTime += (Date.now() - pausedAt);
     paused = false;
@@ -443,21 +445,14 @@ function start(){
     return;
   }
 
+  // start baru
   if(startTime) return;
 
   startTime = Date.now();
-  timerInt = setInterval(updateTimer, 1000);
   toggleButtons(true);
-}
-
-
-  // START BARU
-  if(startTime) return;
-
-  startTime = Date.now();
-  toggleButtons(true);                 // ✅ INI YANG KURANG
   timerInt = setInterval(updateTimer, 1000);
 }
+
 
 
     
@@ -655,6 +650,7 @@ function resetAll(){
 
 </body>
 </html>
+
 
 
 
