@@ -373,6 +373,19 @@ let selectedLane = "Kiri";
 let surveyRunning = false;
 
 
+window.addEventListener("load", () => {
+  startTime = null;
+  paused = false;
+  surveyRunning = false;
+  toggleButtons(false);
+
+  document.querySelectorAll('input[name="lane"]').forEach(r=>{
+    r.disabled = false;
+  });
+
+  document.getElementById("btnExport").disabled = true;
+  document.getElementById("timer").innerText = "00:00:00";
+});
 
 
 
@@ -410,12 +423,13 @@ function pause(){
   if(!startTime || paused) return;
 
   paused = true;
-  pausedAt = Date.now();
+  surveyRunning = false;
 
+  pausedAt = Date.now();
   clearInterval(timerInt);
   timerInt = null;
 
-  toggleButtons(false); // hanya kunci tombol hitung
+  toggleButtons(false);
 }
 
 
@@ -644,12 +658,13 @@ function resetAll(){
 
  
 
-});
+
 
 </script>
 
 </body>
 </html>
+
 
 
 
