@@ -415,7 +415,17 @@ header .subtitle{
   margin-top:2px;
 }
 
+.tile,
+.tile * {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -ms-user-select: none;
+}
 
+.tile {
+  touch-action: none;
+}
 
 
 
@@ -516,7 +526,7 @@ if (localStorage.getItem(LOGIN_KEY) === ACCESS_PIN) {
   <div class="mobile-grid">
 
     <button class="tile sm disabled"
-  onpointerdown="startHold('SM')"
+  onpointerdown="startHold('SM, event')"
   onpointerup="endHold()"
   onpointerleave="endHold()">
 
@@ -529,7 +539,7 @@ if (localStorage.getItem(LOGIN_KEY) === ACCESS_PIN) {
     </button>
 
     <button class="tile mp disabled"
-  onpointerdown="startHold('MP')"
+  onpointerdown="startHold('MP, event')"
   onpointerup="endHold()"
   onpointerleave="endHold()">
 
@@ -542,7 +552,7 @@ if (localStorage.getItem(LOGIN_KEY) === ACCESS_PIN) {
     </button>
 
    <button class="tile ks disabled"
-  onpointerdown="startHold('KS')"
+  onpointerdown="startHold('KS, event')"
   onpointerup="endHold()"
   onpointerleave="endHold()">
 
@@ -555,7 +565,7 @@ if (localStorage.getItem(LOGIN_KEY) === ACCESS_PIN) {
     </button>
 
     <button class="tile bb disabled"
-  onpointerdown="startHold('BB')"
+  onpointerdown="startHold('BB, event')"
   onpointerup="endHold()"
   onpointerleave="endHold()">
 
@@ -568,7 +578,7 @@ if (localStorage.getItem(LOGIN_KEY) === ACCESS_PIN) {
     </button>
 
     <button class="tile tb disabled"
-  onpointerdown="startHold('TB')"
+  onpointerdown="startHold('TB, event')"
   onpointerup="endHold()"
   onpointerleave="endHold()">
 
@@ -581,7 +591,7 @@ if (localStorage.getItem(LOGIN_KEY) === ACCESS_PIN) {
     </button>
 
     <button class="tile ktb disabled"
-  onpointerdown="startHold('KTB')"
+  onpointerdown="startHold('KTB, event')"
   onpointerup="endHold()"
   onpointerleave="endHold()">
 
@@ -594,7 +604,7 @@ if (localStorage.getItem(LOGIN_KEY) === ACCESS_PIN) {
     </button>
 
     <button class="tile pk disabled"
-  onpointerdown="startHold('PK')"
+  onpointerdown="startHold('PK, event')"
   onpointerup="endHold()"
   onpointerleave="endHold()">
 
@@ -630,8 +640,14 @@ let holdTimer = null;
 let holdTriggered = false;
 let activeType = null;
 const HOLD_TIME = 600; // ms
+document.addEventListener("contextmenu", function(e){
+  if(e.target.closest(".tile")){
+    e.preventDefault();
+  }
+});
 
-function startHold(type){
+function startHold(type, e){
+  if(e) e.preventDefault();
   if(!startTime || paused) return;
 
   activeType = type;
@@ -639,9 +655,11 @@ function startHold(type){
 
   holdTimer = setTimeout(() => {
     holdTriggered = true;
-    undoLast(type); // ➖ MINUS
+    undoLast(type);   // ➖ MINUS
+    vibrateTap();
   }, HOLD_TIME);
 }
+
 
 function endHold(){
   if(holdTimer){
@@ -1154,7 +1172,7 @@ window.addEventListener("beforeunload", function(e){
     text-align:center;
   ">
     <h3 style="margin-top:0">Reset Survey?</h3>
-    <p>Data yang sedang berjalan akan hilang.</p>
+    <p>Data nanti hilang loh 🥺 </p>
     <div style="display:flex; gap:12px; margin-top:20px;">
       <button onclick="confirmReset(false)" style="flex:1">Batal</button>
       <button onclick="confirmReset(true)" style="flex:1; background:#e53935; color:white">Reset</button>
@@ -1186,11 +1204,12 @@ window.addEventListener("beforeunload", function(e){
   </div>
 </div>
 <div class="app-credit">
-  app created by N4yr4
+ WEB created by N4yr4
 </div>
 
 </body>
 </html>
+
 
 
 
