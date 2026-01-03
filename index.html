@@ -423,21 +423,17 @@ header .subtitle{
 </head>
 <body>
 <script>
-const ACCESS_PIN = "1111";          // PIN aktif
+const ACCESS_PIN = "1111";
 const LOGIN_KEY  = "traffic_login_pin";
 const TRY_KEY    = "traffic_pin_try";
 
-// =======================
-// RESET LOGIN JIKA PIN BERUBAH
-// =======================
+// reset login jika PIN berubah
 if (localStorage.getItem(LOGIN_KEY) !== ACCESS_PIN) {
   localStorage.removeItem(LOGIN_KEY);
   localStorage.removeItem(TRY_KEY);
 }
 
-// =======================
-// JIKA SUDAH LOGIN → LANGSUNG MASUK
-// =======================
+// jika sudah login → langsung buka app
 if (localStorage.getItem(LOGIN_KEY) === ACCESS_PIN) {
 
   document.addEventListener("DOMContentLoaded", () => {
@@ -449,7 +445,6 @@ if (localStorage.getItem(LOGIN_KEY) === ACCESS_PIN) {
   let tries = Number(localStorage.getItem(TRY_KEY)) || 0;
   let input = prompt("Masukkan PIN Akses");
 
-  // ===== VALIDASI KETAT =====
   input = String(input || "").trim();
 
   const isValid =
@@ -477,13 +472,12 @@ if (localStorage.getItem(LOGIN_KEY) === ACCESS_PIN) {
 
     alert(msg);
 
-    // paksa reload agar prompt muncul lagi
     location.reload();
     return;
-  
   }
 }
 </script>
+
 
 
 
@@ -1199,6 +1193,7 @@ window.addEventListener("beforeunload", function(e){
 
 </body>
 </html>
+
 
 
 
