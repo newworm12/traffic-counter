@@ -423,23 +423,30 @@ header .subtitle{
 </head>
 <body>
 <script>
-const ACCESS_PIN = "1234"; // PIN aktif
-const LOGIN_KEY = "traffic_login_pin";
-const TRY_KEY = "traffic_pin_try";
+const ACCESS_PIN = "1234";          // PIN aktif
+const LOGIN_KEY  = "traffic_login_pin";
+const TRY_KEY    = "traffic_pin_try";
 
-// reset login jika PIN berubah
-if(localStorage.getItem(LOGIN_KEY) !== ACCESS_PIN){
+// =======================
+// RESET LOGIN JIKA PIN BERUBAH
+// =======================
+if (localStorage.getItem(LOGIN_KEY) !== ACCESS_PIN) {
   localStorage.removeItem(LOGIN_KEY);
   localStorage.removeItem(TRY_KEY);
 }
 
-// jika sudah login valid
-if(localStorage.getItem(LOGIN_KEY) === ACCESS_PIN){
-  // lanjut render
+// =======================
+// JIKA SUDAH LOGIN → LANGSUNG MASUK
+// =======================
+if (localStorage.getItem(LOGIN_KEY) === ACCESS_PIN) {
+
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("app").style.display = "block";
+  });
+
 } else {
 
   let tries = Number(localStorage.getItem(TRY_KEY)) || 0;
-
   let input = prompt("Masukkan PIN Akses");
 
   // ===== VALIDASI KETAT =====
@@ -450,16 +457,23 @@ if(localStorage.getItem(LOGIN_KEY) === ACCESS_PIN){
     /^\d+$/.test(input) &&
     input === ACCESS_PIN;
 
-  if(isValid){
+  if (isValid) {
+
     localStorage.setItem(LOGIN_KEY, ACCESS_PIN);
     localStorage.removeItem(TRY_KEY);
+
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("app").style.display = "block";
+    });
+
   } else {
+
     tries++;
     localStorage.setItem(TRY_KEY, tries);
 
     let msg = "PIN ANDA SALAH COBA LAGI";
-    if(tries === 2) msg = "PIN SALAH";
-    if(tries >= 3) msg = "PIN SALAHHHH";
+    if (tries === 2) msg = "PIN SALAH";
+    if (tries >= 3) msg = "PIN SALAHHHH";
 
     document.body.innerHTML = `
       <div style="
@@ -484,7 +498,9 @@ if(localStorage.getItem(LOGIN_KEY) === ACCESS_PIN){
 
 
 
-<div class="app">
+
+<div class="app" id="app" style="display:none">
+
   <header>
   <strong>Traffic Counter</strong>
   <div class="subtitle">Kelas E</div>
@@ -1194,6 +1210,7 @@ window.addEventListener("beforeunload", function(e){
 
 </body>
 </html>
+
 
 
 
