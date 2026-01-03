@@ -507,35 +507,60 @@ body {
 
 
 <script>
+let counters = { SM:0, MP:0, KS:0, BB:0, TB:0, KTB:0, PK:0 };
+let logs = [];
+let startTime = null;
+let timerInt = null;
+let intervalCount = 1;
+let surveyorName = "";
+let selectedLane = "Kiri";
+let paused = false;
+let pausedAt = 0;
+let surveyRunning = false;
+
+function saveState(){
+  const state = {
+    counters,
+    logs,
+    startTime,
+    intervalCount,
+    selectedLane,
+    surveyorName,
+    paused,
+    pausedAt,
+    surveyRunning   // ✅ TAMBAHKAN
+  };
+  localStorage.setItem("trafficState", JSON.stringify(state));
+}
+
+
+function loadState(){
+  const raw = localStorage.getItem("trafficState");
+  if(!raw) return false;
+
+  const state = JSON.parse(raw);
+
+  counters = state.counters || counters;
+  logs = state.logs || [];
+  startTime = state.startTime;
+  intervalCount = state.intervalCount || 1;
+  selectedLane = state.selectedLane || "Kiri";
+  surveyorName = state.surveyorName || "";
+  paused = state.paused || false;
+  pausedAt = state.pausedAt || 0;
+  surveyRunning = state.surveyRunning || false; // ✅ TAMBAHKAN
+
+  return true;
+}
+
+
 /* JavaScript tetap sama seperti sebelumnya */
 const INTERVAL_MINUTE = 15;
 const INTERVAL_SEC = INTERVAL_MINUTE * 60;
 const API_URL = "https://script.google.com/macros/s/AKfycbz-SjWr2aoNCDOyvvZLCJW5vBI58AKjyXzHBa-qpj3mLH4nzWV-zHDZdwW1Ryp_nDY/exec";
 
-let counters = {
-  SM:0,
-  MP:0,
-  KS:0,
-  BB:0,
-  TB:0,
-  KTB:0,
-  PK:0 
-};
 
-let logs = [];
-let startTime = null;
-let timerInt = null;
-let lastInterval = 0;
-let intervalCount = 1;
-let surveyDateTime = "";
-let surveyorName = "";
-let selectedDirection = "A";
-let paused = false;
-let pausedAt = 0;
-let selectedLane = "Kiri";
-let surveyRunning = false;
 
-  
   document.addEventListener("keydown", function(e){
   if(!surveyRunning) return;
 
@@ -548,11 +573,27 @@ let surveyRunning = false;
 
 
 window.addEventListener("load", () => {
-  startTime = null;
-  paused = false;
-  surveyRunning = false;
-  toggleButtons(false);
+  const restored = loadState();
 
+  if(restored){
+    for(let k in counters){
+      document.getElementById(k).innerText = counters[k];
+    }
+
+    document.getElementById("surveyor").value = surveyorName || "";
+    document.querySelector("#laneSelect .selected").innerText = "Lajur " + selectedLane;
+
+    if(surveyRunning && startTime && !paused){
+      toggleButtons(true);
+      timerInt = setInterval(updateTimer, 1000);
+    } else {
+      toggleButtons(false);
+    }
+  } else {
+    toggleButtons(false);
+  }
+
+  // ✅ SEMUA INI HARUS DI DALAM window.load
   document.querySelectorAll('input[name="lane"]').forEach(r=>{
     r.disabled = false;
   });
@@ -615,6 +656,9 @@ function pause(){
   }
 
   toggleButtons(false);
+  saveState();
+
+  
 }
 
 
@@ -639,8 +683,6 @@ function start(){
   if (!inputName) {
     alert("Nama surveyor wajib diisi sebelum memulai.");
     return;
-
-
   }
 
   surveyorName = inputName;
@@ -673,13 +715,11 @@ document.querySelector(".controls").classList.add("running");
 
   if (timerInt) clearInterval(timerInt);
   timerInt = setInterval(updateTimer, 1000);
+
+  saveState();
+
+  
 }
-
-
-
-
-    
-
 
 
 function stop(){
@@ -698,9 +738,10 @@ function stop(){
   document.getElementById("timer").innerText = "00:00:00";
 
   toggleButtons(false);
+
+  // ✅ HAPUS STATE DI SINI SAJA
+  localStorage.removeItem("trafficState");
 }
-
-
 
 
 
@@ -709,6 +750,7 @@ function toggleButtons(enable){
   document.querySelectorAll(".tile").forEach(t=>{
     t.classList.toggle("disabled", !enable);
   });
+  
 }
 
 
@@ -766,6 +808,8 @@ function count(type){
 
   // ✅ HARUS DI DALAM FUNCTION
   updatePercent();
+  saveState();
+
 }
 
 
@@ -882,6 +926,12 @@ function confirmReset(ok){
   stop();
 }
 
+window.addEventListener("beforeunload", function(e){
+  if(startTime){
+    e.preventDefault();
+    e.returnValue = "";
+  }
+});
 
 </script>
 
@@ -938,6 +988,7 @@ function confirmReset(ok){
 
 </body>
 </html>
+
 
 
 
