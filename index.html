@@ -119,16 +119,13 @@
 
 .app {
   height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-
-/* hanya icon yang scroll */
-.grid-wrapper {
-  overflow-y: auto;
+  overflow-y: auto;   /* INI KUNCINYA */
   -webkit-overflow-scrolling: touch;
 }
+
+
+
+
 
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -435,7 +432,7 @@ body {
 
 
   <!-- BAGIAN BAWAH (BISA SCROLL) -->
-<div class="grid-wrapper">
+
   <div class="mobile-grid">
 
     <button class="tile sm disabled" onpointerdown="count('SM')">
@@ -941,6 +938,7 @@ function confirmReset(ok){
 
 </body>
 </html>
+
 
 
 
