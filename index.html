@@ -14,13 +14,13 @@
   --accent: #601ad1;
   --accent-2: #601ad1;;
   --muted: #bdbdbd;
-  --card: #ec5e27; /* warna kotak kecil */
+  --card-accent: #ec5e27; /* warna kotak kecil */
   --shadow: 0 6px 18px rgba(0,0,0,0.6);
   --radius: 14px;
   --gap: 16px;
   --control-height: 48px;
   --accent-contrast: #ffffff;
- --card: #ffffff; /* kotak jadi putih */ 
+ --card-bg: #ffffff; /* kotak jadi putih */ 
  --card-contrast: #111111; /* teks di atas kotak jadi gelap */ 
 }
 .app {
@@ -73,16 +73,7 @@ header #timer{font-weight:600;color:var(--muted);margin-top:6px;display:block}
   flex-wrap:wrap;
   max-width:1100px;
   margin:12px auto;
-}
-.controls input, .controls select, .controls button{
-  height:var(--control-height);
-  padding:0 14px;
-  font-size:15px;
-  border-radius:10px;
-  border:1px solid rgba(255,255,255,0.06);
-  background:var(--card); /* menggunakan warna kotak kecil baru */
-  color:var(--text);
-  box-shadow:var(--shadow);
+
 }
 .controls input,
 .controls select,
@@ -100,7 +91,7 @@ header #timer{font-weight:600;color:var(--muted);margin-top:6px;display:block}
   color:rgba(255,255,255,0.75);
 }
 
-.controls button.export-red{ background:var(--card); color:var(--text); border:1px solid rgba(255,255,255,0.06) }
+.controls button.export-red{ background:var(--card-bg); color:var(--text); border:1px solid rgba(255,255,255,0.06) }
 .controls button.export-blue{ background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:var(--accent-contrast); border:none }
 .controls button#btnStart.active{ background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:var(--accent-contrast); border:none; box-shadow:0 8px 24px rgba(125,57,235,0.18) }
 
@@ -136,7 +127,7 @@ header #timer{font-weight:600;color:var(--muted);margin-top:6px;display:block}
 
 /* Minimal addition: kelas .colored untuk membuat kotak kontras (#ec5e27) */
 .btn.colored {
-  background: var(--card);
+  background: var(--card-bg);
   color: var(--card-contrast);
   border: 1px solid rgba(0,0,0,0.12);
   box-shadow: 0 10px 30px rgba(236,94,39,0.12);
@@ -346,7 +337,7 @@ body {
   <div class="grid-wrapper">
     <div class="grid" id="grid">
 
-      <button class="btn colored disabled" onclick="count('car')">
+      <button class="btn colored disabled" onclick="count('Car')">
         <div class="circle car"><span class="emoji">🚗</span></div>
         <div class="count" id="Car">0</div>
         <div class="label">Car</div>
@@ -474,52 +465,74 @@ function formatDateTimeForLog(d){
 }
   
 function pause(){
-  if(!startTime || paused) return;
+  if (!startTime || paused) return;
 
   paused = true;
   surveyRunning = false;
 
   pausedAt = Date.now();
-  clearInterval(timerInt);
-  timerInt = null;
+
+  if (timerInt) {
+    clearInterval(timerInt);
+    timerInt = null;
+  }
 
   toggleButtons(false);
+
+  // buka pilihan lajur saat pause
+  document.querySelectorAll('input[name="lane"]').forEach(r => {
+    r.disabled = false;
+  });
 }
+
 
 
 
 
 function start(){
   const inputName = document.getElementById("surveyor").value.trim();
-  if(!inputName){
+  if (!inputName) {
     alert("Nama surveyor wajib diisi sebelum memulai.");
     return;
   }
 
   surveyorName = inputName;
-  surveyRunning = true;
 
-  // kunci pilihan lajur
-  document.querySelectorAll('input[name="lane"]').forEach(r=>{
-    r.disabled = true;
-  });
-
-  // lanjut dari pause
-  if(startTime && paused){
+  /* ===== RESUME DARI PAUSE ===== */
+  if (startTime && paused) {
     startTime += (Date.now() - pausedAt);
     paused = false;
+    surveyRunning = true;
+
+    // kunci lajur lagi
+    document.querySelectorAll('input[name="lane"]').forEach(r=>{
+      r.disabled = true;
+    });
+
     toggleButtons(true);
+
+    if (timerInt) clearInterval(timerInt);
     timerInt = setInterval(updateTimer, 1000);
     return;
   }
 
-  // start baru
-  if(startTime) return;
+  /* ===== JIKA SUDAH JALAN, JANGAN DUPLIKASI ===== */
+  if (startTime) return;
 
+  /* ===== START BARU ===== */
+  surveyRunning = true;
   startTime = Date.now();
+
+  document.querySelectorAll('input[name="lane"]').forEach(r=>{
+    r.disabled = true;
+  });
+
   toggleButtons(true);
+
+  if (timerInt) clearInterval(timerInt);
   timerInt = setInterval(updateTimer, 1000);
 }
+
 
 
 
@@ -769,6 +782,7 @@ function confirmReset(ok){
 
 </body>
 </html>
+
 
 
 
