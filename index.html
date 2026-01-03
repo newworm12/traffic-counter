@@ -34,20 +34,20 @@
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:18px;
-  border-radius:18px;
+  padding:12px 14px;
+  border-radius:14px;
   border:none;
   color:white;
-  min-height:90px;
+  min-height:64px;
 }
 
-.card .icon{ font-size:36px }
-.card .info{ flex:1; margin-left:12px; text-align:left }
-.card .name{ font-size:18px; font-weight:700 }
-.card .desc{ font-size:13px; opacity:.85 }
+.card .icon{ font-size:26px }
+.card .info{ flex:1; margin-left:10px; text-align:left }
+.card .name{ font-size:14px; font-weight:500 }
+.card .desc{ font-size:11px; opacity:.85 }
 .card .stat{ text-align:right }
-.card .count{ font-size:22px; font-weight:800 }
-.card .percent{ font-size:13px }
+.card .count{ font-size:16px; font-weight:800 }
+.card .percent{ font-size:11px }
 
 .sm{ background:#2f80ed }
 .mp{ background:#27ae60 }
@@ -93,11 +93,11 @@ body{
 /* Header */
 header{
   background:linear-gradient(180deg, rgba(125,57,235,0.06), rgba(198,255,51,0.02));
-  padding:10px 12px;
+  padding:6px 10px;
   text-align:center;
   box-shadow:var(--shadow);
 }
-header strong{display:block;font-size:16px}
+header strong{display:block;font-size:15px}
 header #timer{font-weight:600;color:var(--muted);margin-top:6px;display:block}
 
 /* Controls */
@@ -127,7 +127,7 @@ header #timer{font-weight:600;color:var(--muted);margin-top:6px;display:block}
   color:rgba(255,255,255,0.75);
 }
 
-.controls button.export-red{ background:var(--card-bg); color:var(--text); border:1px solid rgba(255,255,255,0.06) }
+
 .controls button.export-blue{ background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:var(--accent-contrast); border:none }
 .controls button#btnStart.active{ background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:var(--accent-contrast); border:none; box-shadow:0 8px 24px rgba(125,57,235,0.18) }
 
@@ -344,16 +344,7 @@ body {
 
     <div class="controls">
         
-      <div class="lane-select">
-        <label>
-          <input type="radio" name="lane" value="Kiri" checked>
-          Lajur Kiri
-        </label>
-        <label>
-          <input type="radio" name="lane" value="Kanan">
-          Lajur Kanan
-        </label>
-      </div>
+
 
       <input id="surveyor" type="text" placeholder="Nama surveyor" />
 
@@ -361,14 +352,15 @@ body {
       <button onclick="pause()">⏸ Pause</button>
       <button onclick="stop()">⏹ Stop</button>
 
-      <div class="custom-select" id="directionSelect">
-        <div class="selected" onclick="toggleDropdown()">Arah A</div>
-        <div class="options">
-          <div onclick="setDirection('A','Arah A')">Arah A</div>
-          <div onclick="setDirection('B','Arah B')">Arah B</div>
-          <div onclick="setDirection('AB','Arah A + B')">Arah A + B</div>
-        </div>
-      </div>
+      <div class="custom-select" id="laneSelect">
+  <div class="selected" onclick="toggleLane()">Lajur Kiri</div>
+  <div class="options">
+    <div onclick="setLane('Kiri')">Lajur Kiri</div>
+    <div onclick="setLane('Kanan')">Lajur Kanan</div>
+  </div>
+</div>
+
+
 
       <button id="btnExport" class="export-red" onclick="exportCSV()" disabled>
         ⬇ Export
@@ -517,13 +509,8 @@ window.addEventListener("load", () => {
 
 
 
-function updateLane(){
-  const checked = document.querySelector('input[name="lane"]:checked');
-  selectedLane = checked ? checked.value : "Kiri";
-}
-document.querySelectorAll('input[name="lane"]').forEach(r=>{
-  r.addEventListener("change", updateLane);
-});
+
+
 
 function showRefreshWarning(){
   document.getElementById("refreshWarn").style.display = "flex";
@@ -580,6 +567,15 @@ function pause(){
 }
 
 
+function toggleLane(){
+  document.getElementById("laneSelect").classList.toggle("open");
+}
+
+function setLane(lane){
+  selectedLane = lane;
+  document.querySelector("#laneSelect .selected").innerText = "Lajur " + lane;
+  document.getElementById("laneSelect").classList.remove("open");
+}
 
 
 
@@ -894,6 +890,7 @@ function confirmReset(ok){
 
 </body>
 </html>
+
 
 
 
