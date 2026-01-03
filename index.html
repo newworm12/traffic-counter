@@ -563,7 +563,7 @@ function pause(){
   paused = true;
   surveyRunning = false;
 
-  document.querySelector(".controls").classList.remove("running"); // ✅ FIX
+  document.querySelector(".controls").classList.remove("running");
 
   pausedAt = Date.now();
 
@@ -575,11 +575,9 @@ function pause(){
   toggleButtons(false);
 }
 
+
   // buka pilihan lajur saat pause
-  document.querySelectorAll('input[name="lane"]').forEach(r => {
-    r.disabled = false;
-  });
-}
+ 
 
 
 function toggleLane(){
@@ -657,19 +655,14 @@ function stop(){
 
   document.querySelector(".controls").classList.remove("running");
 
-  // reset data
+  resetCounters();
   logs = [];
-  for(let k in counters){
-    counters[k] = 0;
-    document.getElementById(k).innerText = 0;
-    const pct = document.getElementById(k+"_pct");
-    if(pct) pct.innerText = "0%";
-  }
 
   document.getElementById("timer").innerText = "00:00:00";
 
   toggleButtons(false);
 }
+
 
 
 
@@ -841,27 +834,17 @@ function updatePercent(){
 }
 
 function resetAll(){
-  if(!startTime) return; // cukup cek ini saja
+  if(!startTime) return;
   document.getElementById("confirmReset").style.display = "flex";
 }
+
 
 function confirmReset(ok){
   document.getElementById("confirmReset").style.display = "none";
   if(!ok) return;
-
   stop();
-  logs = [];
-
-  for(let k in counters){
-    counters[k] = 0;
-    document.getElementById(k).innerText = 0;
-  }
-
-  document.getElementById("timer").innerText = "00:00:00";
-  document.getElementById("btnExport").disabled = true;
-
-  surveyRunning = false;
 }
+
 
 </script>
 
@@ -918,6 +901,7 @@ function confirmReset(ok){
 
 </body>
 </html>
+
 
 
 
