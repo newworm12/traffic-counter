@@ -659,6 +659,17 @@ function formatDateTimeForLog(d){
   return `="${dd}/${mm}/${yyyy} ${hh}:${min}:${ss}"`;
 }
 
+function vibrateTap(){
+  if (navigator.vibrate) navigator.vibrate(20);
+}
+
+function vibrateStart(){
+  if (navigator.vibrate) navigator.vibrate(60);
+}
+
+function vibrateStop(){
+  if (navigator.vibrate) navigator.vibrate([30, 40, 30]);
+}
 
   
 function pause(){
@@ -739,7 +750,7 @@ document.querySelector(".controls").classList.add("running");
 
   saveState();
 
-  
+  vibrateStart();
 }
 
 
@@ -762,6 +773,8 @@ function stop(){
 
   // ✅ HAPUS STATE DI SINI SAJA
   localStorage.removeItem("trafficState");
+
+  vibrateStop();
 }
 
 
@@ -814,6 +827,8 @@ function sendToSheet(vehicle){
   
 function count(type){
   if(!startTime || paused) return;
+  vibrateTap(); // ✅ hitung kendaraan
+
 
   counters[type]++;
   document.getElementById(type).innerText = counters[type];
@@ -1012,6 +1027,7 @@ window.addEventListener("beforeunload", function(e){
 
 </body>
 </html>
+
 
 
 
