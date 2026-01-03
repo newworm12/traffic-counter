@@ -93,22 +93,22 @@ body{
 /* Header */
 header{
   background:linear-gradient(180deg, rgba(125,57,235,0.06), rgba(198,255,51,0.02));
-  padding:18px 16px;
+  padding:10px 12px;
   text-align:center;
   box-shadow:var(--shadow);
 }
-header strong{display:block;font-size:18px}
+header strong{display:block;font-size:16px}
 header #timer{font-weight:600;color:var(--muted);margin-top:6px;display:block}
 
 /* Controls */
 .controls{
-  display:flex;
-  gap:8px;
-  padding:14px;
+  display:grid;
+  grid-template-columns: 1fr auto;
+  gap:6px;
+  padding:8px 10px;
+  margin:6px auto;
   align-items:center;
-  flex-wrap:wrap;
-  max-width:1100px;
-  margin:12px auto;
+
 
 }
 .controls input,
@@ -312,12 +312,21 @@ body {
   .controls button,
   .controls input,
   .custom-select .selected {
-    height: 56px;
-    font-size: 16px;
-    border-radius: 14px;
-  }
-
+  height: 40px;        /* KUNCI: bikin menu tidak makan layar */
+  font-size: 14px;
+  border-radius: 10px;
 }
+
+.controls{
+  display:grid;
+  grid-template-columns: 1fr auto;
+  gap:6px;
+  padding:8px 10px;
+  margin:6px auto;
+}
+
+
+
 
 </style>
 </head>
@@ -885,6 +894,7 @@ function confirmReset(ok){
 
 </body>
 </html>
+
 
 
 
