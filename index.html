@@ -23,6 +23,42 @@
  --card-bg: #ffffff; /* kotak jadi putih */ 
  --card-contrast: #111111; /* teks di atas kotak jadi gelap */ 
 }
+  .mobile-grid{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  padding:16px;
+}
+
+.card{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:18px;
+  border-radius:18px;
+  border:none;
+  color:white;
+  min-height:90px;
+}
+
+.card .icon{ font-size:36px }
+.card .info{ flex:1; margin-left:12px; text-align:left }
+.card .name{ font-size:18px; font-weight:700 }
+.card .desc{ font-size:13px; opacity:.85 }
+.card .stat{ text-align:right }
+.card .count{ font-size:22px; font-weight:800 }
+.card .percent{ font-size:13px }
+
+.sm{ background:#2f80ed }
+.mp{ background:#27ae60 }
+.ks{ background:#9b51e0 }
+.bb{ background:#f2994a }
+.tb{ background:#eb5757 }
+.ktb{ background:#56ccf2 }
+
+.card.disabled{ opacity:.4; pointer-events:none }
+.card:active{ transform:scale(.98) }
+
 .app {
   height: 100vh;
   display: flex;
@@ -335,45 +371,82 @@ body {
 
   <!-- BAGIAN BAWAH (BISA SCROLL) -->
   <div class="grid-wrapper">
-    <div class="grid" id="grid">
+    <div class="mobile-grid">
 
-      <button class="btn colored disabled" onclick="count('Car')">
-        <div class="circle car"><span class="emoji">🚗</span></div>
-        <div class="count" id="Car">0</div>
-        <div class="label">Car</div>
-      </button>
-
-      <button class="btn colored disabled" onclick="count('Bus')">
-        <div class="circle bus"><span class="emoji">🚌</span></div>
-        <div class="count" id="Bus">0</div>
-        <div class="label">Bus</div>
-      </button>
-
-      <button class="btn colored disabled" onclick="count('Motor')">
-        <div class="circle bike"><span class="emoji">🏍️</span></div>
-        <div class="count" id="Motor">0</div>
-        <div class="label">Motor</div>
-      </button>
-
-      <button class="btn colored disabled" onclick="count('Van')">
-        <div class="circle van"><span class="emoji">🚐</span></div>
-        <div class="count" id="Van">0</div>
-        <div class="label">Van</div>
-      </button>
-
-      <button class="btn colored disabled" onclick="count('Medium')">
-        <div class="circle truck1"><span class="emoji">🚚</span></div>
-        <div class="count" id="Medium">0</div>
-        <div class="label">Medium</div>
-      </button>
-
-      <button class="btn colored disabled" onclick="count('Heavy')">
-        <div class="circle truck2"><span class="emoji">🚛</span></div>
-        <div class="count" id="Heavy">0</div>
-        <div class="label">Heavy</div>
-      </button>
-
+  <button class="card sm disabled" onclick="count('SM')">
+    <div class="icon">🏍️</div>
+    <div class="info">
+      <div class="name">SM</div>
+      <div class="desc">Sepeda Motor</div>
     </div>
+    <div class="stat">
+      <div class="count" id="SM">0</div>
+      <div class="percent" id="SM_pct">0%</div>
+    </div>
+  </button>
+
+  <button class="card mp disabled" onclick="count('MP')">
+    <div class="icon">🚗</div>
+    <div class="info">
+      <div class="name">MP</div>
+      <div class="desc">Mobil Penumpang</div>
+    </div>
+    <div class="stat">
+      <div class="count" id="MP">0</div>
+      <div class="percent" id="MP_pct">0%</div>
+    </div>
+  </button>
+
+  <button class="card ks disabled" onclick="count('KS')">
+    <div class="icon">🚐</div>
+    <div class="info">
+      <div class="name">KS</div>
+      <div class="desc">Kendaraan Sedang</div>
+    </div>
+    <div class="stat">
+      <div class="count" id="KS">0</div>
+      <div class="percent" id="KS_pct">0%</div>
+    </div>
+  </button>
+
+  <button class="card bb disabled" onclick="count('BB')">
+    <div class="icon">🚌</div>
+    <div class="info">
+      <div class="name">BB</div>
+      <div class="desc">Bus Besar</div>
+    </div>
+    <div class="stat">
+      <div class="count" id="BB">0</div>
+      <div class="percent" id="BB_pct">0%</div>
+    </div>
+  </button>
+
+  <button class="card tb disabled" onclick="count('TB')">
+    <div class="icon">🚛</div>
+    <div class="info">
+      <div class="name">TB</div>
+      <div class="desc">Truk Besar</div>
+    </div>
+    <div class="stat">
+      <div class="count" id="TB">0</div>
+      <div class="percent" id="TB_pct">0%</div>
+    </div>
+  </button>
+
+  <button class="card ktb disabled" onclick="count('KTB')">
+    <div class="icon">🚲</div>
+    <div class="info">
+      <div class="name">KTB</div>
+      <div class="desc">Tidak Bermotor</div>
+    </div>
+    <div class="stat">
+      <div class="count" id="KTB">0</div>
+      <div class="percent" id="KTB_pct">0%</div>
+    </div>
+  </button>
+
+</div>
+
   </div>
 
 </div>
@@ -385,7 +458,15 @@ const INTERVAL_MINUTE = 15;
 const INTERVAL_SEC = INTERVAL_MINUTE * 60;
 const API_URL = "https://script.google.com/macros/s/AKfycbz-SjWr2aoNCDOyvvZLCJW5vBI58AKjyXzHBa-qpj3mLH4nzWV-zHDZdwW1Ryp_nDY/exec";
 
-let counters = {Car:0,Bus:0,Motor:0,Van:0,Medium:0,Heavy:0};
+let counters = {
+  SM:0,
+  MP:0,
+  KS:0,
+  BB:0,
+  TB:0,
+  KTB:0
+};
+
 let logs = [];
 let startTime = null;
 let timerInt = null;
@@ -556,16 +637,18 @@ function stop(){
   document.querySelectorAll('input[name="lane"]').forEach(r=>{
     r.disabled = false;
   });
+  updatePercent();
 }
 
 
 
 
 function toggleButtons(enable){
-    document.querySelectorAll(".btn").forEach(b=>{
-        b.classList.toggle("disabled", !enable);
-    });
+  document.querySelectorAll(".card").forEach(c=>{
+    c.classList.toggle("disabled", !enable);
+  });
 }
+
 
 /* DAN INI DI BAWAHNYA */
 
@@ -618,12 +701,10 @@ function count(type){
   });
 
   sendToSheet(type);
+
+  // ✅ HARUS DI DALAM FUNCTION
+  updatePercent();
 }
-
-
-
-
-
 
 
 
@@ -706,12 +787,25 @@ function updateExportButton(){
 }
 
 function resetCounters(){
-    for(let k in counters){
-        counters[k]=0;
-        document.getElementById(k).innerText=0;
-    }
-    logs=[];
-    
+  for(let k in counters){
+    counters[k] = 0;
+    document.getElementById(k).innerText = 0;
+
+    const pct = document.getElementById(k+"_pct");
+    if(pct) pct.innerText = "0%";
+  }
+  logs = [];
+}
+
+function updatePercent(){
+  const total = Object.values(counters).reduce((a,b)=>a+b,0);
+  if(!total) return;
+
+  for(let k in counters){
+    const pct = ((counters[k]/total)*100).toFixed(1);
+    const el = document.getElementById(k+"_pct");
+    if(el) el.innerText = pct+"%";
+  }
 }
 
 function resetAll(){
@@ -791,6 +885,7 @@ function confirmReset(ok){
 
 </body>
 </html>
+
 
 
 
