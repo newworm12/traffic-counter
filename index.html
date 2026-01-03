@@ -23,12 +23,7 @@
  --card-bg: #ffffff; /* kotak jadi putih */ 
  --card-contrast: #111111; /* teks di atas kotak jadi gelap */ 
 }
-  .mobile-grid{
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-  padding:16px;
-}
+
 
 .card{
   display:flex;
@@ -64,6 +59,62 @@
 }
 .card{
   touch-action: manipulation;
+}
+/* ===== TILE GRID MODE ===== */
+.mobile-grid{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:12px;
+  padding:12px;
+}
+
+.tile{
+  aspect-ratio: 1 / 1;
+  border-radius:16px;
+  border:none;
+  color:white;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  font-weight:700;
+  touch-action: manipulation;
+}
+
+.tile:active{
+  transform:scale(0.97);
+}
+
+.tile.disabled{
+  opacity:.4;
+  pointer-events:none;
+}
+
+.tile-icon{
+  font-size:32px;
+}
+
+.tile-count{
+  font-size:26px;
+  font-weight:800;
+}
+
+.tile-label{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-size:12px;
+}
+
+.tile-label .code{
+  font-weight:700;
+}
+
+.tile-label .fullname{
+  font-size:11px;
+  opacity:.85;
+  white-space:nowrap;
 }
 
 .app {
@@ -228,6 +279,19 @@ header #timer{font-weight:600;color:var(--muted);margin-top:6px;display:block}
   .controls{ padding:10px }
   .controls input{ min-width:120px }
 }
+  @media (max-width:600px){
+  .mobile-grid{
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width:420px){
+  .mobile-grid{
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+  
 /* ===== CUSTOM DROPDOWN THEME ===== */
 .custom-select{
   position:relative;
@@ -371,95 +435,76 @@ body {
 
 
   <!-- BAGIAN BAWAH (BISA SCROLL) -->
-  <div class="grid-wrapper">
-    <div class="mobile-grid">
+<div class="grid-wrapper">
+  <div class="mobile-grid">
 
-  <button class="card sm disabled" onpointerdown="count('SM')">
-    <div class="icon">🏍️</div>
-    <div class="info">
-      <div class="name">SM</div>
-      <div class="desc">Sepeda Motor</div>
-    </div>
-    <div class="stat">
-      <div class="count" id="SM">0</div>
-      <div class="percent" id="SM_pct">0%</div>
-    </div>
-  </button>
+    <button class="tile sm disabled" onpointerdown="count('SM')">
+      <div class="tile-icon">🏍️</div>
+      <div class="tile-count" id="SM">0</div>
+      <div class="tile-label">
+        <span class="code">SM</span>
+        <span class="fullname">Sepeda Motor</span>
+      </div>
+    </button>
 
-  <button class="card mp disabled"  onpointerdown="count('MP')">
-    <div class="icon">🚗</div>
-    <div class="info">
-      <div class="name">MP</div>
-      <div class="desc">Mobil Penumpang</div>
-    </div>
-    <div class="stat">
-      <div class="count" id="MP">0</div>
-      <div class="percent" id="MP_pct">0%</div>
-    </div>
-  </button>
+    <button class="tile mp disabled" onpointerdown="count('MP')">
+      <div class="tile-icon">🚗</div>
+      <div class="tile-count" id="MP">0</div>
+      <div class="tile-label">
+        <span class="code">MP</span>
+        <span class="fullname">Mobil Penumpang</span>
+      </div>
+    </button>
 
-  <button class="card ks disabled"  onpointerdown="count('KS')">
-    <div class="icon">🚐</div>
-    <div class="info">
-      <div class="name">KS</div>
-      <div class="desc">Kendaraan Sedang</div>
-    </div>
-    <div class="stat">
-      <div class="count" id="KS">0</div>
-      <div class="percent" id="KS_pct">0%</div>
-    </div>
-  </button>
+    <button class="tile ks disabled" onpointerdown="count('KS')">
+      <div class="tile-icon">🚐</div>
+      <div class="tile-count" id="KS">0</div>
+      <div class="tile-label">
+        <span class="code">KS</span>
+        <span class="fullname">Kendaraan Sedang</span>
+      </div>
+    </button>
 
-  <button class="card bb disabled"  onpointerdown="count('BB')">
-    <div class="icon">🚌</div>
-    <div class="info">
-      <div class="name">BB</div>
-      <div class="desc">Bus Besar</div>
-    </div>
-    <div class="stat">
-      <div class="count" id="BB">0</div>
-      <div class="percent" id="BB_pct">0%</div>
-    </div>
-  </button>
+    <button class="tile bb disabled" onpointerdown="count('BB')">
+      <div class="tile-icon">🚌</div>
+      <div class="tile-count" id="BB">0</div>
+      <div class="tile-label">
+        <span class="code">BB</span>
+        <span class="fullname">Bus Besar</span>
+      </div>
+    </button>
 
-  <button class="card tb disabled"  onpointerdown="count('TB')">
-    <div class="icon">🚛</div>
-    <div class="info">
-      <div class="name">TB</div>
-      <div class="desc">Truk Besar</div>
-    </div>
-    <div class="stat">
-      <div class="count" id="TB">0</div>
-      <div class="percent" id="TB_pct">0%</div>
-    </div>
-  </button>
+    <button class="tile tb disabled" onpointerdown="count('TB')">
+      <div class="tile-icon">🚛</div>
+      <div class="tile-count" id="TB">0</div>
+      <div class="tile-label">
+        <span class="code">TB</span>
+        <span class="fullname">Truk Besar</span>
+      </div>
+    </button>
 
-  <button class="card ktb disabled"  onpointerdown="count('KTB')">
-    <div class="icon">🚲</div>
-    <div class="info">
-      <div class="name">KTB</div>
-      <div class="desc">Tidak Bermotor</div>
-    </div>
-    <div class="stat">
-      <div class="count" id="KTB">0</div>
-      <div class="percent" id="KTB_pct">0%</div>
-    </div>
-  </button>
-<button class="card pk disabled" onpointerdown="count('PK')">
-  <div class="icon">🚶</div>
-  <div class="info">
-    <div class="name">PK</div>
-    <div class="desc">Pejalan Kaki</div>
+    <button class="tile ktb disabled" onpointerdown="count('KTB')">
+      <div class="tile-icon">🚲</div>
+      <div class="tile-count" id="KTB">0</div>
+      <div class="tile-label">
+        <span class="code">KTB</span>
+        <span class="fullname">Tak Bermotor</span>
+      </div>
+    </button>
+
+    <button class="tile pk disabled" onpointerdown="count('PK')">
+      <div class="tile-icon">🚶</div>
+      <div class="tile-count" id="PK">0</div>
+      <div class="tile-label">
+        <span class="code">PK</span>
+        <span class="fullname">Pejalan Kaki</span>
+      </div>
+    </button>
+
   </div>
-  <div class="stat">
-    <div class="count" id="PK">0</div>
-    <div class="percent" id="PK_pct">0%</div>
-  </div>
-</button>
-
 </div>
 
-  </div>
+
 
 </div>
 
@@ -610,9 +655,7 @@ document.querySelector(".controls").classList.add("running");
     surveyRunning = true;
 
     // kunci lajur lagi
-    document.querySelectorAll('input[name="lane"]').forEach(r=>{
-      r.disabled = true;
-    });
+   
 
     toggleButtons(true);
 
@@ -628,9 +671,6 @@ document.querySelector(".controls").classList.add("running");
   surveyRunning = true;
   startTime = Date.now();
 
-  document.querySelectorAll('input[name="lane"]').forEach(r=>{
-    r.disabled = true;
-  });
 
   toggleButtons(true);
 
@@ -669,8 +709,8 @@ function stop(){
 
 
 function toggleButtons(enable){
-  document.querySelectorAll(".card").forEach(c=>{
-    c.classList.toggle("disabled", !enable);
+  document.querySelectorAll(".tile").forEach(t=>{
+    t.classList.toggle("disabled", !enable);
   });
 }
 
@@ -901,6 +941,7 @@ function confirmReset(ok){
 
 </body>
 </html>
+
 
 
 
