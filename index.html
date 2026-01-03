@@ -461,8 +461,11 @@ function formatDateTimeForLog(d){
     const hh = String(d.getHours()).padStart(2,'0');
     const min = String(d.getMinutes()).padStart(2,'0');
     const ss = String(d.getSeconds()).padStart(2,'0');
-    return `${dd}/${mm}/${yyyy} ${hh}:${min}:${ss}`;
+
+    // apostrophe memaksa Excel membaca sebagai teks
+    return `'${dd}/${mm}/${yyyy} ${hh}:${min}:${ss}`;
 }
+
   
 function pause(){
   if (!startTime || paused) return;
@@ -782,6 +785,7 @@ function confirmReset(ok){
 
 </body>
 </html>
+
 
 
 
