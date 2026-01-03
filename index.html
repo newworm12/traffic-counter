@@ -455,16 +455,17 @@ function setDirection(value,label){
 }
 
 function formatDateTimeForLog(d){
-    const dd = String(d.getDate()).padStart(2,'0');
-    const mm = String(d.getMonth()+1).padStart(2,'0');
-    const yyyy = d.getFullYear();
-    const hh = String(d.getHours()).padStart(2,'0');
-    const min = String(d.getMinutes()).padStart(2,'0');
-    const ss = String(d.getSeconds()).padStart(2,'0');
+  const dd = String(d.getDate()).padStart(2,'0');
+  const mm = String(d.getMonth()+1).padStart(2,'0');
+  const yyyy = d.getFullYear();
+  const hh = String(d.getHours()).padStart(2,'0');
+  const min = String(d.getMinutes()).padStart(2,'0');
+  const ss = String(d.getSeconds()).padStart(2,'0');
 
-    // apostrophe memaksa Excel membaca sebagai teks
-    return `'${dd}/${mm}/${yyyy} ${hh}:${min}:${ss}`;
+  // Dipaksa sebagai TEXT oleh Excel
+  return `="${dd}/${mm}/${yyyy} ${hh}:${min}:${ss}"`;
 }
+
 
   
 function pause(){
@@ -785,6 +786,7 @@ function confirmReset(ok){
 
 </body>
 </html>
+
 
 
 
