@@ -57,7 +57,12 @@
 .ktb{ background:#56ccf2 }
 
 .card.disabled{ opacity:.4; pointer-events:none }
-.card:active{ transform:scale(.98) }
+.card:active{
+  transform:none;
+}
+.card{
+  touch-action: manipulation;
+}
 
 .app {
   height: 100vh;
@@ -82,8 +87,11 @@ body{
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
 }
-/* ===== PREVENT REFRESH / SCROLL (WAJIB) ===== */
 
+/* ===== MOBILE FAST TAP FIX ===== */
+button{
+  -webkit-tap-highlight-color: transparent;
+}
 
 /* Header */
 header{
@@ -364,7 +372,7 @@ body {
   <div class="grid-wrapper">
     <div class="mobile-grid">
 
-  <button class="card sm disabled" onclick="count('SM')">
+  <button class="card sm disabled" onpointerdown="count('SM')">
     <div class="icon">🏍️</div>
     <div class="info">
       <div class="name">SM</div>
@@ -376,7 +384,7 @@ body {
     </div>
   </button>
 
-  <button class="card mp disabled" onclick="count('MP')">
+  <button class="card mp disabled"  onpointerdown="count('MP')">
     <div class="icon">🚗</div>
     <div class="info">
       <div class="name">MP</div>
@@ -388,7 +396,7 @@ body {
     </div>
   </button>
 
-  <button class="card ks disabled" onclick="count('KS')">
+  <button class="card ks disabled"  onpointerdown="count('KS')">
     <div class="icon">🚐</div>
     <div class="info">
       <div class="name">KS</div>
@@ -400,7 +408,7 @@ body {
     </div>
   </button>
 
-  <button class="card bb disabled" onclick="count('BB')">
+  <button class="card bb disabled"  onpointerdown="count('BB')">
     <div class="icon">🚌</div>
     <div class="info">
       <div class="name">BB</div>
@@ -412,7 +420,7 @@ body {
     </div>
   </button>
 
-  <button class="card tb disabled" onclick="count('TB')">
+  <button class="card tb disabled"  onpointerdown="count('TB')">
     <div class="icon">🚛</div>
     <div class="info">
       <div class="name">TB</div>
@@ -424,7 +432,7 @@ body {
     </div>
   </button>
 
-  <button class="card ktb disabled" onclick="count('KTB')">
+  <button class="card ktb disabled"  onpointerdown="count('KTB')">
     <div class="icon">🚲</div>
     <div class="info">
       <div class="name">KTB</div>
@@ -883,6 +891,7 @@ function confirmReset(ok){
 
 </body>
 </html>
+
 
 
 
