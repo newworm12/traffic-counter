@@ -400,6 +400,15 @@ body {
   margin:4px auto;
   align-items:center;
 }
+.app-credit{
+  position:fixed;
+  bottom:6px;
+  right:10px;
+  font-size:11px;
+  color:rgba(255,255,255,0.45);
+  pointer-events:none;
+  user-select:none;
+}
 
 
 
@@ -410,6 +419,12 @@ body {
 <body>
 
 <div class="app">
+  <header>
+  <strong>Traffic Counter</strong>
+  <span id="timer">00:00:00</span>
+</header>
+
+  
 
  <div class="controls">
   <input id="surveyor" placeholder="Nama surveyor">
@@ -985,9 +1000,13 @@ window.addEventListener("beforeunload", function(e){
     </button>
   </div>
 </div>
+<div class="app-credit">
+  app created by N4yr4
+</div>
 
 </body>
 </html>
+
 
 
 
