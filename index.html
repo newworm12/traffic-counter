@@ -433,56 +433,50 @@ header .subtitle{
 </head>
 <body>
 <script>
-const ACCESS_PIN = "1231"; //GANTI !!
+const ACCESS_PIN = "1231";
 const LOGIN_KEY  = "traffic_login_pin";
 const TRY_KEY    = "traffic_pin_try";
 
-// reset login jika PIN berubah
-if (localStorage.getItem(LOGIN_KEY) !== ACCESS_PIN) {
-  localStorage.removeItem(LOGIN_KEY);
-  localStorage.removeItem(TRY_KEY);
+document.addEventListener("DOMContentLoaded", () => {
+  checkLogin();
+});
+
+function checkLogin(){
+  if (localStorage.getItem(LOGIN_KEY) === ACCESS_PIN) {
+    showApp();
+    return;
+  }
+  askPin();
 }
 
-// jika sudah login
-if (localStorage.getItem(LOGIN_KEY) === ACCESS_PIN) {
-  document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("app").style.display = "block";
-  });
-} else {
-
+function askPin(){
   let tries = Number(localStorage.getItem(TRY_KEY)) || 0;
 
-  while (true) {
-    let input = prompt("Masukkan PIN Akses");
-    input = String(input || "").trim();
+  const input = prompt("Masukkan PIN Akses");
+  if (input === null) return; // user cancel
 
-    const isValid =
-      input.length === ACCESS_PIN.length &&
-      /^\d+$/.test(input) &&
-      input === ACCESS_PIN;
+  const pin = input.trim();
 
-    if (isValid) {
-      localStorage.setItem(LOGIN_KEY, ACCESS_PIN);
-      localStorage.removeItem(TRY_KEY);
-
-      document.addEventListener("DOMContentLoaded", () => {
-        document.getElementById("app").style.display = "block";
-      });
-      break;
-    }
-
-    tries++;
-    localStorage.setItem(TRY_KEY, tries);
-
-    let msg = "PIN ANDA SALAH COBA LAGI";
-    if (tries === 2) msg = "PIN SALAH";
-    if (tries === 3) msg = "PIN SALAH KOCAK";
-    if (tries === 4) msg = "PIN MASIH SALAH WOY";
-    if (tries === 5) msg = "BISA NULIS G SIH!";
-    if (tries >= 6) msg = "😑";
-
-    alert(msg);
+  if (pin === ACCESS_PIN) {
+    localStorage.setItem(LOGIN_KEY, ACCESS_PIN);
+    localStorage.removeItem(TRY_KEY);
+    showApp();
+    return;
   }
+
+  tries++;
+  localStorage.setItem(TRY_KEY, tries);
+
+  let msg = "PIN SALAH";
+  if (tries === 3) msg = "PIN MASIH SALAH";
+  if (tries >= 5) msg = "STOP NGASAL";
+
+  alert(msg);
+  askPin(); // ulangi
+}
+
+function showApp(){
+  document.getElementById("app").style.display = "block";
 }
 </script>
 
@@ -1209,6 +1203,7 @@ window.addEventListener("beforeunload", function(e){
 
 </body>
 </html>
+
 
 
 
