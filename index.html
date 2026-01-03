@@ -657,18 +657,23 @@ function exportCSV(){
     // ===== HEADER CSV =====
     let csv = `Nama Surveyor: ${displayName}\n`;
     csv += `Tanggal: ${formatDateTimeForLog(new Date())}\n\n`;
-    csv += `Waktu,Lajur,Kendaraan,Nama Surveyor\n`;
+    csv += `Waktu;Lajur;Kendaraan;Nama Surveyor\n`;
+
 
     // ===== ISI DATA RAW =====
     logs.forEach(l=>{
         const safeName = l.name
             ? `"${String(l.name).replace(/"/g,'""')}"`
             : "";
-        csv += `${l.time},${l.lane},${l.vehicle},${safeName}\n`;
+        csv += `${l.time};${l.lane};${l.vehicle};${safeName}\n`;
+
     });
 
     // ===== DOWNLOAD =====
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const blob = new Blob(["\uFEFF" + csv], {
+  type: "text/csv;charset=utf-8;"
+});
+
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
 
@@ -786,6 +791,7 @@ function confirmReset(ok){
 
 </body>
 </html>
+
 
 
 
