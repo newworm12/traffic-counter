@@ -934,13 +934,12 @@ updateExportButton();
 /* ================= COUNT ================= */
 function sendToSheet(log){
   const data = new URLSearchParams();
-  data.append("action", "ADD");
+  data.append("action", log.status); // ADD / CANCEL
   data.append("id", log.id);
   data.append("time", log.time);
   data.append("lane", log.lane);
   data.append("vehicle", log.vehicle);
   data.append("surveyor", log.name);
-  data.append("status", status); // OK atau CANCEL
 
   fetch(API_URL, {
     method: "POST",
@@ -948,6 +947,7 @@ function sendToSheet(log){
     body: data
   });
 }
+
 
   
 function count(type){
@@ -958,25 +958,23 @@ function count(type){
   counters[type]++;
   localStorage.setItem("eventId", eventId);
 
-  const id = eventId++;
-  document.getElementById(type).innerText = counters[type];
   const log = {
-    id,
+    id: eventId++,
     time: formatDateTimeForLog(new Date()),
     lane: selectedLane,
     vehicle: type,
     name: surveyorName,
-    status: "OK"
+    status: "ADD"
   };
 
+  document.getElementById(type).innerText = counters[type];
   logs.push(log);
 
-  sendToSheet(type, "OK");   // kirim normal
+  sendToSheet(log);
   saveState();
   updatePercent();
-
-  
 }
+
 
 function undoLast(type){
   for(let i = logs.length - 1; i >= 0; i--){
@@ -993,7 +991,8 @@ function undoLast(type){
       updatePercent();
 
       // KIRIM KE SHEET SEBAGAI CANCEL (BARIS BARU)
-      sendToSheet(type, "CANCEL");
+      log.status = "CANCEL";
+      sendToSheet(log);
 
       saveState(); // kalau kamu pakai localStorage
       return;
@@ -1191,6 +1190,7 @@ window.addEventListener("beforeunload", function(e){
 
 </body>
 </html>
+
 
 
 
