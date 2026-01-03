@@ -446,7 +446,7 @@ if (localStorage.getItem("app_version") !== APP_VERSION) {
 </script>
 
 <script>
-const ACCESS_PIN = "heil";
+const ACCESS_PIN = "mulyono";
 const LOGIN_KEY  = "traffic_login_pin";
 const TRY_KEY    = "traffic_pin_try";
 
@@ -485,9 +485,13 @@ function askPin(){
     if (tries === 3) msg = "PIN SALAHHHH 🙂 ";
     if (tries === 4) msg = "PIN MASIH SALAH ☹️ ";
     if (tries === 5) msg = "BISA NULIS G SIH! 😒";
-    if (tries === 5) msg = "GET SOME HELP 🫩";
-    if (tries === 5) msg = "😑";
-    if (tries >= 6) msg = "🫩";
+    if (tries === 6) msg = "TANYA ORANG COBA 🫩";
+    if (tries === 7) msg = "UDAH NANYA BELUM ? 😑";
+    if (tries === 8) msg = "BISA GAKK !!😡 ";
+    if (tries === 9) msg = "tolol";
+    if (tries ===10) msg = "😐";
+    if (tries ===10) msg = "nyerah aja g si";
+    if (tries >= 11) msg = "😑";
 
 
 
@@ -1223,6 +1227,7 @@ window.addEventListener("beforeunload", function(e){
 
 </body>
 </html>
+
 
 
 
