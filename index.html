@@ -934,12 +934,12 @@ updateExportButton();
 /* ================= COUNT ================= */
 function sendToSheet(log){
   const data = new URLSearchParams();
-  data.append("action", log.status); // ADD / CANCEL
   data.append("id", log.id);
   data.append("time", log.time);
   data.append("lane", log.lane);
   data.append("vehicle", log.vehicle);
   data.append("surveyor", log.name);
+  data.append("status", log.status); // ✅ BENAR
 
   fetch(API_URL, {
     method: "POST",
@@ -950,14 +950,13 @@ function sendToSheet(log){
 
 
 
+
   
 function count(type){
   if(!startTime || paused) return;
 
-  vibrateTap();
-
   counters[type]++;
-  localStorage.setItem("eventId", eventId);
+  document.getElementById(type).innerText = counters[type];
 
   const log = {
     id: eventId++,
@@ -968,13 +967,11 @@ function count(type){
     status: "ADD"
   };
 
-  document.getElementById(type).innerText = counters[type];
   logs.push(log);
-
   sendToSheet(log);
   saveState();
-  updatePercent();
 }
+
 
 
 function undoLast(type){
@@ -983,25 +980,25 @@ function undoLast(type){
 
     if(log.vehicle === type && log.status === "ADD"){
 
-      // 1. ubah status
-      log.status = "CANCEL";
-
-      // 2. update counter
+      // 1. update counter lokal
       counters[type] = Math.max(0, counters[type] - 1);
       document.getElementById(type).innerText = counters[type];
 
-      // 3. kirim CANCEL ke sheet (ID SAMA)
-      sendToSheet(log);
+      // 2. kirim CANCEL DENGAN ID YANG SAMA
+      sendToSheet({
+        ...log,
+        status: "CANCEL"
+      });
 
-      // 4. hapus dari log lokal
+      // 3. hapus ADD dari log lokal
       logs.splice(i, 1);
 
-      updatePercent();
       saveState();
       return;
     }
   }
 }
+
 
 
 
@@ -1194,6 +1191,7 @@ window.addEventListener("beforeunload", function(e){
 
 </body>
 </html>
+
 
 
 
