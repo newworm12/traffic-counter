@@ -471,27 +471,16 @@ if (localStorage.getItem(LOGIN_KEY) === ACCESS_PIN) {
     tries++;
     localStorage.setItem(TRY_KEY, tries);
 
-    let msg = "PIN LU SALAH ";
+    let msg = "PIN ANDA SALAH COBA LAGI";
     if (tries === 2) msg = "PIN SALAH";
     if (tries >= 3) msg = "PIN SALAHHHH";
 
-    document.body.innerHTML = `
-      <div style="
-        min-height:100vh;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        background:#1c1c1c;
-        color:white;
-        font-family:sans-serif;
-        text-align:center;
-      ">
-        <div>
-          <h2>${msg}</h2>
-          <p>Coba repres web nya</p>
-        </div>
-      </div>
-    `;
+    alert(msg);
+
+    // paksa reload agar prompt muncul lagi
+    location.reload();
+    return;
+  
   }
 }
 </script>
@@ -1210,6 +1199,7 @@ window.addEventListener("beforeunload", function(e){
 
 </body>
 </html>
+
 
 
 
