@@ -433,35 +433,33 @@ if (localStorage.getItem(LOGIN_KEY) !== ACCESS_PIN) {
   localStorage.removeItem(TRY_KEY);
 }
 
-// jika sudah login → langsung buka app
+// jika sudah login
 if (localStorage.getItem(LOGIN_KEY) === ACCESS_PIN) {
-
   document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("app").style.display = "block";
   });
-
 } else {
 
   let tries = Number(localStorage.getItem(TRY_KEY)) || 0;
-  let input = prompt("Masukkan PIN Akses");
 
-  input = String(input || "").trim();
+  while (true) {
+    let input = prompt("Masukkan PIN Akses");
+    input = String(input || "").trim();
 
-  const isValid =
-    input.length === ACCESS_PIN.length &&
-    /^\d+$/.test(input) &&
-    input === ACCESS_PIN;
+    const isValid =
+      input.length === ACCESS_PIN.length &&
+      /^\d+$/.test(input) &&
+      input === ACCESS_PIN;
 
-  if (isValid) {
+    if (isValid) {
+      localStorage.setItem(LOGIN_KEY, ACCESS_PIN);
+      localStorage.removeItem(TRY_KEY);
 
-    localStorage.setItem(LOGIN_KEY, ACCESS_PIN);
-    localStorage.removeItem(TRY_KEY);
-
-    document.addEventListener("DOMContentLoaded", () => {
-      document.getElementById("app").style.display = "block";
-    });
-
-  } else {
+      document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("app").style.display = "block";
+      });
+      break;
+    }
 
     tries++;
     localStorage.setItem(TRY_KEY, tries);
@@ -471,12 +469,10 @@ if (localStorage.getItem(LOGIN_KEY) === ACCESS_PIN) {
     if (tries >= 3) msg = "PIN SALAHHHH";
 
     alert(msg);
-
-    location.reload();
-    return;
   }
 }
 </script>
+
 
 
 
@@ -1193,6 +1189,7 @@ window.addEventListener("beforeunload", function(e){
 
 </body>
 </html>
+
 
 
 
