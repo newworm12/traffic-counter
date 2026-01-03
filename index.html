@@ -456,7 +456,11 @@ header .subtitle{
 
   <div class="mobile-grid">
 
-    <button class="tile sm disabled" onpointerdown="count('SM')">
+    <button class="tile sm disabled"
+  onpointerdown="startHold('SM')"
+  onpointerup="endHold()"
+  onpointerleave="endHold()">
+
       <div class="tile-icon">🏍️</div>
       <div class="tile-count" id="SM">0</div>
       <div class="tile-label">
@@ -465,7 +469,11 @@ header .subtitle{
       </div>
     </button>
 
-    <button class="tile mp disabled" onpointerdown="count('MP')">
+    <button class="tile mp disabled"
+  onpointerdown="startHold('MP')"
+  onpointerup="endHold()"
+  onpointerleave="endHold()">
+
       <div class="tile-icon">🚗</div>
       <div class="tile-count" id="MP">0</div>
       <div class="tile-label">
@@ -474,7 +482,11 @@ header .subtitle{
       </div>
     </button>
 
-    <button class="tile ks disabled" onpointerdown="count('KS')">
+   <button class="tile ks disabled"
+  onpointerdown="startHold('KS')"
+  onpointerup="endHold()"
+  onpointerleave="endHold()">
+
       <div class="tile-icon">🚐</div>
       <div class="tile-count" id="KS">0</div>
       <div class="tile-label">
@@ -483,7 +495,11 @@ header .subtitle{
       </div>
     </button>
 
-    <button class="tile bb disabled" onpointerdown="count('BB')">
+    <button class="tile bb disabled"
+  onpointerdown="startHold('BB')"
+  onpointerup="endHold()"
+  onpointerleave="endHold()">
+
       <div class="tile-icon">🚌</div>
       <div class="tile-count" id="BB">0</div>
       <div class="tile-label">
@@ -492,7 +508,11 @@ header .subtitle{
       </div>
     </button>
 
-    <button class="tile tb disabled" onpointerdown="count('TB')">
+    <button class="tile tb disabled"
+  onpointerdown="startHold('TB')"
+  onpointerup="endHold()"
+  onpointerleave="endHold()">
+
       <div class="tile-icon">🚛</div>
       <div class="tile-count" id="TB">0</div>
       <div class="tile-label">
@@ -501,7 +521,11 @@ header .subtitle{
       </div>
     </button>
 
-    <button class="tile ktb disabled" onpointerdown="count('KTB')">
+    <button class="tile ktb disabled"
+  onpointerdown="startHold('KTB')"
+  onpointerup="endHold()"
+  onpointerleave="endHold()">
+
       <div class="tile-icon">🚲</div>
       <div class="tile-count" id="KTB">0</div>
       <div class="tile-label">
@@ -510,7 +534,11 @@ header .subtitle{
       </div>
     </button>
 
-    <button class="tile pk disabled" onpointerdown="count('PK')">
+    <button class="tile pk disabled"
+  onpointerdown="startHold('PK')"
+  onpointerup="endHold()"
+  onpointerleave="endHold()">
+
       <div class="tile-icon">🚶</div>
       <div class="tile-count" id="PK">0</div>
       <div class="tile-label">
@@ -538,6 +566,36 @@ let selectedLane = "Kiri";
 let paused = false;
 let pausedAt = 0;
 let surveyRunning = false;
+let eventId = Number(localStorage.getItem("eventId")) || 1;
+let holdTimer = null;
+let holdTriggered = false;
+let activeType = null;
+const HOLD_TIME = 600; // ms
+
+function startHold(type){
+  if(!startTime || paused) return;
+
+  activeType = type;
+  holdTriggered = false;
+
+  holdTimer = setTimeout(() => {
+    holdTriggered = true;
+    undoLast(type); // ➖ MINUS
+  }, HOLD_TIME);
+}
+
+function endHold(){
+  if(holdTimer){
+    clearTimeout(holdTimer);
+    holdTimer = null;
+  }
+
+  if(!holdTriggered && activeType){
+    count(activeType); // ➕ PLUS
+  }
+
+  activeType = null;
+}
 
 function saveState(){
   const state = {
@@ -773,6 +831,9 @@ function stop(){
 
   // ✅ HAPUS STATE DI SINI SAJA
   localStorage.removeItem("trafficState");
+  eventId = 1;
+  localStorage.removeItem("eventId");
+
 
   vibrateStop();
 }
@@ -812,11 +873,14 @@ updateExportButton();
 }
 
 /* ================= COUNT ================= */
-function sendToSheet(vehicle){
+function sendToSheet(log){
   const data = new URLSearchParams();
-  data.append("surveyor", surveyorName);
-  data.append("lane", selectedLane);
-  data.append("vehicle", vehicle);
+  data.append("action", "ADD");
+  data.append("id", log.id);
+  data.append("time", log.time);
+  data.append("lane", log.lane);
+  data.append("vehicle", log.vehicle);
+  data.append("surveyor", log.name);
 
   fetch(API_URL, {
     method: "POST",
@@ -824,31 +888,73 @@ function sendToSheet(vehicle){
     body: data
   });
 }
+
   
 function count(type){
   if(!startTime || paused) return;
-  vibrateTap(); // ✅ hitung kendaraan
 
+  vibrateTap();
 
   counters[type]++;
-  document.getElementById(type).innerText = counters[type];
+  localStorage.setItem("eventId", eventId);
 
-  logs.push({
+  const id = eventId++;
+  document.getElementById(type).innerText = counters[type];
+  const log = {
+    id,
     time: formatDateTimeForLog(new Date()),
     lane: selectedLane,
     vehicle: type,
-    name: surveyorName
-  });
+    name: surveyorName,
+    status: "OK"
+  };
 
-  sendToSheet(type);
+  logs.push(log);
 
-  // ✅ HARUS DI DALAM FUNCTION
-  updatePercent();
+  sendToSheet(log);   // kirim normal
   saveState();
+  updatePercent();
 
+  
+}
+
+function undoLast(type){
+  // cari log terakhir dengan vehicle yang sama & status OK
+  for(let i = logs.length - 1; i >= 0; i--){
+    if(logs[i].vehicle === type && logs[i].status === "OK"){
+      
+      const log = logs[i];
+      logs.splice(i, 1);
+
+      counters[type] = Math.max(0, counters[type] - 1);
+      document.getElementById(type).innerText = counters[type];
+      
+      updatePercent();
+
+
+      
+      // tandai batal
+      log.status = "CANCEL";
+      sendCancelToSheet(log);
+
+      saveState();
+      return;
+    }
+  }
 }
 
 
+function sendCancelToSheet(log){
+  const data = new URLSearchParams();
+  data.append("action", "CANCEL");
+  data.append("id", log.id);
+
+  fetch(API_URL, {
+    method: "POST",
+    mode: "no-cors",
+    body: data
+  });
+}
 
 function sanitizeFilename(name){
     if(!name) return "";
@@ -1027,6 +1133,7 @@ window.addEventListener("beforeunload", function(e){
 
 </body>
 </html>
+
 
 
 
