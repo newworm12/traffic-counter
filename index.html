@@ -422,6 +422,39 @@ header .subtitle{
 </style>
 </head>
 <body>
+<script>
+const ACCESS_PIN = "1234"; // ganti
+const LOGIN_KEY = "traffic_logged_in";
+
+// kalau sudah login, langsung lolos
+if(localStorage.getItem(LOGIN_KEY) === "true"){
+  // lanjut render
+} else {
+  const input = prompt("Masukkan PIN Akses");
+
+  if(input === ACCESS_PIN){
+    localStorage.setItem(LOGIN_KEY, "true");
+  } else {
+    document.body.innerHTML = `
+      <div style="
+        min-height:100vh;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        background:#1c1c1c;
+        color:white;
+        font-family:sans-serif;
+        text-align:center;
+      ">
+        <div>
+          <h2>Akses Ditolak</h2>
+          <p>PIN salah</p>
+        </div>
+      </div>
+    `;
+  }
+}
+</script>
 
 <div class="app">
   <header>
@@ -1133,6 +1166,7 @@ window.addEventListener("beforeunload", function(e){
 
 </body>
 </html>
+
 
 
 
