@@ -949,6 +949,7 @@ function sendToSheet(log){
 }
 
 
+
   
 function count(type){
   if(!startTime || paused) return;
@@ -980,25 +981,28 @@ function undoLast(type){
   for(let i = logs.length - 1; i >= 0; i--){
     const log = logs[i];
 
-    if(log.vehicle === type && log.status === "OK"){
+    if(log.vehicle === type && log.status === "ADD"){
 
-      // hapus OK dari log lokal
-      logs.splice(i, 1);
+      // 1. ubah status
+      log.status = "CANCEL";
 
-      // update counter UI
+      // 2. update counter
       counters[type] = Math.max(0, counters[type] - 1);
       document.getElementById(type).innerText = counters[type];
-      updatePercent();
 
-      // KIRIM KE SHEET SEBAGAI CANCEL (BARIS BARU)
-      log.status = "CANCEL";
+      // 3. kirim CANCEL ke sheet (ID SAMA)
       sendToSheet(log);
 
-      saveState(); // kalau kamu pakai localStorage
+      // 4. hapus dari log lokal
+      logs.splice(i, 1);
+
+      updatePercent();
+      saveState();
       return;
     }
   }
 }
+
 
 
 function sendCancelToSheet(log){
@@ -1190,6 +1194,7 @@ window.addEventListener("beforeunload", function(e){
 
 </body>
 </html>
+
 
 
 
