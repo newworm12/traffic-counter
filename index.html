@@ -423,18 +423,39 @@ header .subtitle{
 </head>
 <body>
 <script>
-const ACCESS_PIN = "1244"; // GANTI PIN !!
-const LOGIN_KEY = "traffic_logged_in";
+const ACCESS_PIN = "1234"; // PIN aktif
+const LOGIN_KEY = "traffic_login_pin";
+const TRY_KEY = "traffic_pin_try";
 
-// kalau sudah login, langsung lolos
-if(localStorage.getItem(LOGIN_KEY) === "true"){
-  // lanjut render
+// reset counter jika PIN berubah
+if(localStorage.getItem(LOGIN_KEY) !== ACCESS_PIN){
+  localStorage.removeItem(LOGIN_KEY);
+  localStorage.removeItem(TRY_KEY);
+}
+
+// sudah login dengan PIN benar
+if(localStorage.getItem(LOGIN_KEY) === ACCESS_PIN){
+  // lanjut render web
 } else {
+
+  let tries = Number(localStorage.getItem(TRY_KEY)) || 0;
+
   const input = prompt("Masukkan PIN Akses");
 
   if(input === ACCESS_PIN){
-    localStorage.setItem(LOGIN_KEY, "true");
+    localStorage.setItem(LOGIN_KEY, ACCESS_PIN);
+    localStorage.removeItem(TRY_KEY);
   } else {
+    tries++;
+    localStorage.setItem(TRY_KEY, tries);
+
+    let msg = "PIN ANDA SALAH COBA LAGI";
+    if(tries === 2) msg = "PIN SALAH";
+    if(tries === 3) msg = "PIN SALAHHHH ";
+    if(tries === 4) msg = "PIN SALAHHHH WOY !!";
+    if(tries === 5) msg = "BISA BACA GA !!? ";
+    if(tries >= 6) msg = "PIN SALAHHHH NJING !!";
+
     document.body.innerHTML = `
       <div style="
         min-height:100vh;
@@ -447,14 +468,15 @@ if(localStorage.getItem(LOGIN_KEY) === "true"){
         text-align:center;
       ">
         <div>
-          <h2>Akses Ditolak</h2>
-          <p>PIN salah</p>
+          <h2>${msg}</h2>
+          <p>Refresh halaman untuk mencoba lagi</p>
         </div>
       </div>
     `;
   }
 }
 </script>
+
 
 <div class="app">
   <header>
@@ -1166,6 +1188,7 @@ window.addEventListener("beforeunload", function(e){
 
 </body>
 </html>
+
 
 
 
