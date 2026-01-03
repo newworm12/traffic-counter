@@ -423,7 +423,7 @@ header .subtitle{
 </head>
 <body>
 <script>
-const ACCESS_PIN = "1234";          // PIN aktif
+const ACCESS_PIN = "1111";          // PIN aktif
 const LOGIN_KEY  = "traffic_login_pin";
 const TRY_KEY    = "traffic_pin_try";
 
@@ -471,7 +471,7 @@ if (localStorage.getItem(LOGIN_KEY) === ACCESS_PIN) {
     tries++;
     localStorage.setItem(TRY_KEY, tries);
 
-    let msg = "PIN ANDA SALAH COBA LAGI";
+    let msg = "PIN LU SALAH ";
     if (tries === 2) msg = "PIN SALAH";
     if (tries >= 3) msg = "PIN SALAHHHH";
 
@@ -488,7 +488,7 @@ if (localStorage.getItem(LOGIN_KEY) === ACCESS_PIN) {
       ">
         <div>
           <h2>${msg}</h2>
-          <p>Refresh halaman untuk mencoba lagi</p>
+          <p>Coba repres web nya</p>
         </div>
       </div>
     `;
@@ -1210,6 +1210,7 @@ window.addEventListener("beforeunload", function(e){
 
 </body>
 </html>
+
 
 
 
