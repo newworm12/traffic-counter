@@ -428,7 +428,7 @@ header .subtitle{
 }
 
 .tile {
-  touch-action: none;
+  touch-action: manipulation;
 }
 
 
@@ -544,7 +544,7 @@ function showApp(){
   <div class="mobile-grid">
 
     <button class="tile sm disabled"
-  onpointerdown="startHold('SM, even)"
+  onpointerdown="startHold('SM, event)"
   onpointerup="endHold()"
   onpointerleave="endHold()">
 
@@ -1227,6 +1227,7 @@ window.addEventListener("beforeunload", function(e){
 
 </body>
 </html>
+
 
 
 
