@@ -466,7 +466,10 @@ if (localStorage.getItem(LOGIN_KEY) === ACCESS_PIN) {
 
     let msg = "PIN ANDA SALAH COBA LAGI";
     if (tries === 2) msg = "PIN SALAH";
-    if (tries >= 3) msg = "PIN SALAHHHH";
+    if (tries === 3) msg = "PIN SALAH KOCAK";
+    if (tries === 4) msg = "PIN MASIH SALAH WOY";
+    if (tries === 5) msg = "BISA NULIS G SIH!";
+    if (tries >= 6) msg = "😑";
 
     alert(msg);
   }
@@ -1189,6 +1192,7 @@ window.addEventListener("beforeunload", function(e){
 
 </body>
 </html>
+
 
 
 
