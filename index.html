@@ -65,14 +65,9 @@
   flex-direction: column;
 }
 
-/* bagian atas tidak scroll */
-.top-panel {
-  flex-shrink: 0;
-}
 
 /* hanya icon yang scroll */
 .grid-wrapper {
-  flex: 1;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
@@ -104,17 +99,25 @@ header #timer{font-weight:600;color:var(--muted);margin-top:6px;display:block}
 .controls{
   display:grid;
   grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
   gap:6px;
-  padding:8px 10px;
-  margin:6px auto;
+  padding:6px 8px;
+  margin:4px auto;
   align-items:center;
-
-
 }
+.hide-on-run{
+  display:block;
+}
+
+.controls.running .hide-on-run{
+  display:none;
+}
+
 .controls input,
 .controls select,
 .controls button{
-  height:var(--control-height);
+  height:34px;   /* KUNCI UKURAN MENU */
+
   padding:0 14px;
   font-size:15px;
   border-radius:10px;
@@ -312,18 +315,21 @@ body {
   .controls button,
   .controls input,
   .custom-select .selected {
-  height: 40px;        /* KUNCI: bikin menu tidak makan layar */
-  font-size: 14px;
-  border-radius: 10px;
+  height: 34px;        /* KUNCI: bikin menu tidak makan layar */
+  font-size: 13px;
+  border-radius: 8px;
 }
 
 .controls{
   display:grid;
   grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
   gap:6px;
-  padding:8px 10px;
-  margin:6px auto;
+  padding:6px 8px;
+  margin:4px auto;
+  align-items:center;
 }
+
 
 
 
@@ -334,41 +340,25 @@ body {
 
 <div class="app">
 
-  <!-- BAGIAN ATAS (TETAP / TIDAK SCROLL) -->
-  <div class="top-panel">
+ <div class="controls">
+  <input id="surveyor" placeholder="Nama surveyor">
 
-    <header>
-      <strong>Traffic Counter</strong>
-      <span id="timer">00:00:00</span>
-    </header>
+  <button id="btnStart" onclick="start()">▶ Start</button>
+  <button onclick="pause()">⏸ Pause</button>
+  <button onclick="stop()">⏹ Stop</button>
 
-    <div class="controls">
-        
-
-
-      <input id="surveyor" type="text" placeholder="Nama surveyor" />
-
-      <button id="btnStart" onclick="start()">▶ Start</button>
-      <button onclick="pause()">⏸ Pause</button>
-      <button onclick="stop()">⏹ Stop</button>
-
-      <div class="custom-select" id="laneSelect">
-  <div class="selected" onclick="toggleLane()">Lajur Kiri</div>
-  <div class="options">
-    <div onclick="setLane('Kiri')">Lajur Kiri</div>
-    <div onclick="setLane('Kanan')">Lajur Kanan</div>
+  <div class="custom-select" id="laneSelect">
+    <div class="selected" onclick="toggleLane()">Lajur Kiri</div>
+    <div class="options">
+      <div onclick="setLane('Kiri')">Lajur Kiri</div>
+      <div onclick="setLane('Kanan')">Lajur Kanan</div>
+    </div>
   </div>
+
+  <button onclick="resetAll()" class="hide-on-run">🔄 Reset</button>
 </div>
 
 
-
-      <button id="btnExport" class="export-red" onclick="exportCSV()" disabled>
-        ⬇ Export
-      </button>
-      <button onclick="resetAll()">🔄 Reset</button>
-
-    </div>
-  </div>
 
   <!-- BAGIAN BAWAH (BISA SCROLL) -->
   <div class="grid-wrapper">
@@ -584,10 +574,12 @@ function start(){
   if (!inputName) {
     alert("Nama surveyor wajib diisi sebelum memulai.");
     return;
+
+
   }
 
   surveyorName = inputName;
-
+document.querySelector(".controls").classList.add("running");
   /* ===== RESUME DARI PAUSE ===== */
   if (startTime && paused) {
     startTime += (Date.now() - pausedAt);
@@ -636,6 +628,7 @@ function stop(){
   startTime = null;
   paused = false;
   surveyRunning = false;
+  document.querySelector(".controls").classList.remove("running");
 
   toggleButtons(false);
 
@@ -890,6 +883,7 @@ function confirmReset(ok){
 
 </body>
 </html>
+
 
 
 
