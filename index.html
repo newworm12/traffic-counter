@@ -940,6 +940,7 @@ function sendToSheet(log){
   data.append("lane", log.lane);
   data.append("vehicle", log.vehicle);
   data.append("surveyor", log.name);
+  data.append("status", status); // OK atau CANCEL
 
   fetch(API_URL, {
     method: "POST",
@@ -970,7 +971,7 @@ function count(type){
 
   logs.push(log);
 
-  sendToSheet(log);   // kirim normal
+  sendToSheet(type, "OK");   // kirim normal
   saveState();
   updatePercent();
 
@@ -978,25 +979,23 @@ function count(type){
 }
 
 function undoLast(type){
-  // cari log terakhir dengan vehicle yang sama & status OK
   for(let i = logs.length - 1; i >= 0; i--){
-    if(logs[i].vehicle === type && logs[i].status === "OK"){
-      
-      const log = logs[i];
+    const log = logs[i];
+
+    if(log.vehicle === type && log.status === "OK"){
+
+      // hapus OK dari log lokal
       logs.splice(i, 1);
 
+      // update counter UI
       counters[type] = Math.max(0, counters[type] - 1);
       document.getElementById(type).innerText = counters[type];
-      
       updatePercent();
 
+      // KIRIM KE SHEET SEBAGAI CANCEL (BARIS BARU)
+      sendToSheet(type, "CANCEL");
 
-      
-      // tandai batal
-      log.status = "CANCEL";
-      sendCancelToSheet(log);
-
-      saveState();
+      saveState(); // kalau kamu pakai localStorage
       return;
     }
   }
@@ -1192,6 +1191,7 @@ window.addEventListener("beforeunload", function(e){
 
 </body>
 </html>
+
 
 
 
