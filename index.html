@@ -446,7 +446,7 @@ if (localStorage.getItem("app_version") !== APP_VERSION) {
 </script>
 
 <script>
-const ACCESS_PIN = "mulyono";
+const ACCESS_PIN = "111";
 const LOGIN_KEY  = "traffic_login_pin";
 const TRY_KEY    = "traffic_pin_try";
 
@@ -544,7 +544,7 @@ function showApp(){
   <div class="mobile-grid">
 
     <button class="tile sm disabled"
-  onpointerdown="startHold('SM', even)"
+  onpointerdown="startHold('SM', event)"
   onpointerup="endHold()"
   onpointerleave="endHold()">
 
@@ -1227,6 +1227,7 @@ window.addEventListener("beforeunload", function(e){
 
 </body>
 </html>
+
 
 
 
