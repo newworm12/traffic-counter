@@ -953,14 +953,18 @@ if (btn){
   btn.disabled = false;
   btn.classList.remove("export-red");
   btn.classList.add("export-blue");
-}
-} else {
+ }
+} 
+    else {
     const btn = document.getElementById("btnExport");
-if (btn){
+if (btn)
+{
   btn.disabled = true;
   btn.classList.remove("export-blue");
   btn.classList.add("export-red");
+ }
 }
+    
 updateExportButton();
 }
 
@@ -1224,6 +1228,7 @@ window.addEventListener("beforeunload", function(e){
 
 </body>
 </html>
+
 
 
 
