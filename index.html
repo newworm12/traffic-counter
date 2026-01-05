@@ -969,12 +969,6 @@ function updateTimer(){
   }
 }
 
-function updateExportButton(){
-  const btn = document.getElementById("btnExport");
-  if (btn) {
-    btn.disabled = false;
-  }
-}
 
 
 /* ================= COUNT ================= */
@@ -1126,8 +1120,10 @@ function exportCSV(){
 function updateExportButton(){
   const btn = document.getElementById("btnExport");
   if (btn) {
-  btn.disabled = false;
+    btn.disabled = false;
+  }
 }
+
 
 
 
@@ -1230,6 +1226,7 @@ window.addEventListener("beforeunload", function(e){
 
 </body>
 </html>
+
 
 
 
