@@ -772,7 +772,9 @@ window.addEventListener("load", () => {
     r.disabled = false;
   });
 
-  document.getElementById("btnExport").disabled = true;
+  const btn = document.getElementById("btnExport");
+if (btn) btn.disabled = true;
+
   document.getElementById("timer").innerText = "00:00:00";
 });
 
@@ -956,13 +958,18 @@ function updateTimer(){
     let s = String(t % 60).padStart(2,'0');
     document.getElementById("timer").innerText = `${h}:${m}:${s}`;
     if(t >= INTERVAL_SEC){
-    document.getElementById("btnExport").disabled = false;
-    document.getElementById("btnExport").classList.remove("export-red");
-    document.getElementById("btnExport").classList.add("export-blue");
+    const btn = document.getElementById("btnExport");
+if (btn){
+  btn.disabled = false;
+  btn.classList.remove("export-red");
+  btn.classList.add("export-blue");
+}
 } else {
-    document.getElementById("btnExport").disabled = true;
-    document.getElementById("btnExport").classList.remove("export-blue");
-    document.getElementById("btnExport").classList.add("export-red");
+    const btn = document.getElementById("btnExport");
+if (btn){
+  btn.disabled = true;
+  btn.classList.remove("export-blue");
+  btn.classList.add("export-red");
 }
 updateExportButton();
 }
@@ -1227,6 +1234,7 @@ window.addEventListener("beforeunload", function(e){
 
 </body>
 </html>
+
 
 
 
