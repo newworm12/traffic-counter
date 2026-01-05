@@ -763,7 +763,9 @@ window.addEventListener("load", () => {
   });
 
   const btn = document.getElementById("btnExport");
-if (btn) btn.disabled = true;
+if (btn) {
+  btn.disabled = false;
+}
 
   document.getElementById("timer").innerText = "00:00:00";
 });
@@ -965,8 +967,11 @@ if (btn)
  }
 }
     
-updateExportButton();
+function updateExportButton(){
+  const btn = document.getElementById("btnExport");
+  if (!btn) return;
 }
+
 
 /* ================= COUNT ================= */
 function sendToSheet(log){
@@ -1115,17 +1120,12 @@ function exportCSV(){
 
 
 function updateExportButton(){
-    const btn = document.getElementById("btnExport");
-    if(logs.length > 0){
-        btn.disabled = false;
-        btn.classList.remove("export-red");
-        btn.classList.add("export-blue");
-    } else {
-        btn.disabled = true;
-        btn.classList.remove("export-blue");
-        btn.classList.add("export-red");
-    }
+  const btn = document.getElementById("btnExport");
+  if (btn) {
+  btn.disabled = false;
 }
+
+
 
 function resetCounters(){
   for(let k in counters){
@@ -1226,6 +1226,7 @@ window.addEventListener("beforeunload", function(e){
 
 </body>
 </html>
+
 
 
 
