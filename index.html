@@ -983,8 +983,10 @@ function sendToSheet(log){
 
   fetch(API_URL, {
   method: "POST",
+  mode: "no-cors",
   body: data
-  });
+});
+
 }
 
 
@@ -1048,8 +1050,10 @@ function sendCancelToSheet(log){
 
   fetch(API_URL, {
   method: "POST",
+  mode: "no-cors",
   body: data
-  });
+});
+
 }
 
 function sanitizeFilename(name){
@@ -1226,6 +1230,7 @@ window.addEventListener("beforeunload", function(e){
 
 </body>
 </html>
+
 
 
 
