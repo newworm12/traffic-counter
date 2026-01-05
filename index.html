@@ -971,7 +971,9 @@ function updateTimer(){
 
 function updateExportButton(){
   const btn = document.getElementById("btnExport");
-  if (!btn) return;
+  if (btn) {
+    btn.disabled = false;
+  }
 }
 
 
@@ -1228,6 +1230,7 @@ window.addEventListener("beforeunload", function(e){
 
 </body>
 </html>
+
 
 
 
