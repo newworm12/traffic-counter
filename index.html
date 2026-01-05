@@ -943,30 +943,32 @@ function toggleButtons(enable){
 
 /* ================= TIMER ================= */
 function updateTimer(){
-    if(!startTime) return;
-    let t = Math.floor((Date.now() - startTime) / 1000);
-    let h = String(Math.floor(t / 3600)).padStart(2,'0');
-    let m = String(Math.floor((t % 3600) / 60)).padStart(2,'0');
-    let s = String(t % 60).padStart(2,'0');
-    document.getElementById("timer").innerText = `${h}:${m}:${s}`;
-    if(t >= INTERVAL_SEC){
+  if(!startTime) return;
+
+  let t = Math.floor((Date.now() - startTime) / 1000);
+  let h = String(Math.floor(t / 3600)).padStart(2,'0');
+  let m = String(Math.floor((t % 3600) / 60)).padStart(2,'0');
+  let s = String(t % 60).padStart(2,'0');
+
+  document.getElementById("timer").innerText = `${h}:${m}:${s}`;
+
+  if(t >= INTERVAL_SEC){
     const btn = document.getElementById("btnExport");
-if (btn){
-  btn.disabled = false;
-  btn.classList.remove("export-red");
-  btn.classList.add("export-blue");
- }
-} 
-    else {
+    if (btn){
+      btn.disabled = false;
+      btn.classList.remove("export-red");
+      btn.classList.add("export-blue");
+    }
+  } else {
     const btn = document.getElementById("btnExport");
-if (btn)
-{
-  btn.disabled = true;
-  btn.classList.remove("export-blue");
-  btn.classList.add("export-red");
- }
+    if (btn){
+      btn.disabled = true;
+      btn.classList.remove("export-blue");
+      btn.classList.add("export-red");
+    }
+  }
 }
-    
+
 function updateExportButton(){
   const btn = document.getElementById("btnExport");
   if (!btn) return;
@@ -1226,6 +1228,7 @@ window.addEventListener("beforeunload", function(e){
 
 </body>
 </html>
+
 
 
 
