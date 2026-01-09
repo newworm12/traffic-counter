@@ -692,10 +692,12 @@ function saveState(){
     surveyorName,
     paused,
     pausedAt,
-    surveyRunning   // ✅ TAMBAHKAN
+    surveyRunning
   };
   localStorage.setItem("trafficState", JSON.stringify(state));
+  localStorage.setItem("eventId", eventId); // ✅ TAMBAHKAN INI
 }
+
 
 
 function loadState(){
@@ -858,6 +860,11 @@ function setLane(lane){
 
 
 function start(){
+ if(!navigator.onLine){
+  alert("Tidak ada koneksi internet.\nSurvey tidak boleh dimulai karena data tidak akan tersimpan.");
+  return;
+}
+
   const inputName = document.getElementById("surveyor").value.trim();
   if (!inputName) {
     alert("Nama surveyor wajib diisi sebelum memulai.");
@@ -994,6 +1001,11 @@ function sendToSheet(log){
 
   
 function count(type){
+  if(!navigator.onLine){
+    alert("Tidak ada koneksi internet.\nSilakan hubungkan internet terlebih dahulu.\n\nData TIDAK akan masuk ke Excel.");
+    return;
+  }
+
   if(!startTime || paused) return;
 
   counters[type]++;
@@ -1016,6 +1028,11 @@ function count(type){
 
 
 function undoLast(type){
+ if(!navigator.onLine){
+  alert("Tidak ada koneksi internet.\nUndo diblokir karena data Excel tidak bisa diupdate.");
+  return;
+}
+
   for(let i = logs.length - 1; i >= 0; i--){
     const log = logs[i];
 
@@ -1173,6 +1190,23 @@ window.addEventListener("beforeunload", function(e){
 });
 
 </script>
+<script>
+function updateOnlineStatus(){
+  const banner = document.getElementById("offlineBanner");
+  if(!navigator.onLine){
+    banner.style.display = "block";
+  } else {
+    banner.style.display = "none";
+  }
+}
+
+// cek saat load
+window.addEventListener("load", updateOnlineStatus);
+
+// cek realtime
+window.addEventListener("online", updateOnlineStatus);
+window.addEventListener("offline", updateOnlineStatus);
+</script>
 
   <!-- ===== MODAL KONFIRMASI RESET ===== -->
 
@@ -1227,9 +1261,25 @@ window.addEventListener("beforeunload", function(e){
 <div class="app-credit">
  WEB created by N4yr4
 </div>
+<div id="offlineBanner" style="
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  background:#e53935;
+  color:white;
+  text-align:center;
+  padding:8px;
+  font-size:13px;
+  z-index:10000;
+  display:none;
+">
+  ⚠️ Tidak ada koneksi internet. Data TIDAK akan tersimpan ke Excel.
+</div>
 
 </body>
 </html>
+
 
 
 
